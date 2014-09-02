@@ -1,5 +1,8 @@
+code, pre {
+    font-family: Cousine, Monaco, "Courier 10 Pitch", Courier, monospace;
+}
+
 pre.src {
-    font-family: Monaco, Courier;
     background: #191919;
     width: 890px;
     padding: 5px;
@@ -17,7 +20,7 @@ pre.src {
 code {
     color: #e8e8d3;
 
-    span.type {
+    span.type, span.function-name {
         color: #ffb964;
     }
 

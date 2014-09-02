@@ -81,12 +81,6 @@ h3#reply-title,
 input[type=submit] {
     font-family: "Helvetica Neue", Arial, Helvetica, "Nimbus Sans L", sans-serif;
 }
-pre {
-    font-family: "Courier 10 Pitch", Courier, monospace;
-}
-code {
-    font-family: "Courier 10 Pitch", Courier, "Courier New", Menlo, monospace;
-}
 
 /* The main theme structure */
 #access .menu-header,
@@ -493,11 +487,6 @@ div#nav li#menubar-search {
     position: relative;
     clear: both;
     padding: 0;
-}
-
-.entry-content p {
-    margin-bottom: 0;
-    text-align: justify;
 }
 
 #content .entry-summary p:last-child {
