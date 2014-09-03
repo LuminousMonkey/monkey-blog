@@ -4,9 +4,9 @@ title: Trying to understand activation records.
 
 It's interesting to see the development of programming languages over time, in particular to see how programming languages influenced the development of the underlying hardware. I'm currently studying programming languages at Uni, and the majority of the course is the study of past programming languages. We've started off with Pseudo-codes (very early assembly type language), and progressed from there. FORTRAN, ALGOL, Pascal, and some other languages mentioned off-hand.
 
-It's interesting to note that early computers didn't have the concept of the stack, that wonderful little memory space that the processor can use for keeping track of where it's been, and what it's doing (in the context of the current running process). The concept of the stack came about as the result of programming languages. In particular, the block structure of ALGOL called for the tracking of both static and dynamic "activation records". Best I can figure out is that this is what's known as the [call stack](http://en.wikipedia.org/wiki/Call_stack).
+It's interesting to note that early computers didn't have the concept of the stack, that wonderful little memory space that the processor can use for keeping track of where it's been, and what it's doing (in the context of the current running function). The concept of the stack came about as the result of programming languages. In particular, the block structure of ALGOL called for the tracking of both static and dynamic "activation records". Best I can figure out is that this is what's known as the [call stack](http://en.wikipedia.org/wiki/Call_stack).
 
-But, I'm just not quite sure. In particular the idea of traversing the stack to go and find variables that are outside the scope of the current block. I know that global variables cover this, but, as far as I'm aware, the direct address of the global variable is used. So, to help with my understanding, I wrote a [contrived C program](https://gist.github.com/LuminousMonkey/eb47b9b1f283d1d8838b) and would go through the assembly code that resulted.
+But, I'm just not quite sure how exactly these static and dynamic activation records are supposed to work. In particular the idea of traversing the stack to go and find variables that are outside the scope of the current block. I know that global variables cover this, but, as far as I'm aware, the direct address of the global variable is used. So, to help with my understanding, I wrote a [contrived C program](https://gist.github.com/LuminousMonkey/eb47b9b1f283d1d8838b) and went go through the assembly code that resulted.
 
 I compiled with GCC on an Arch Linux install, with 64bit compilation. Just using -S to generate the [assembly in AT&T syntax](https://gist.github.com/LuminousMonkey/d2ecacc615cb798a8f16). (operator source destination)
 
@@ -72,9 +72,7 @@ All through this bit of code we can't see anything other than indexed stack load
 </span>    <span class="keyword">ret</span>                     <span class="comment-delimiter">// </span><span class="comment">Pop address off the stack and
 </span>                            <span class="comment-delimiter">// </span><span class="comment">return to it.</span></code></pre>
 
-Concerning stack frames, we only care about stack operations and things involving the rsp, and rbp registers. With the Linux ABI, it is the responsibility of the function being called to save things correctly before proceeding.
-
-With the "pushq %rbp" instruction, it's saving the position of the stack frame of the calling function. This is done at the front of every function, it then takes the current value of the stack (rsp) and copies it into the stack frame register (rbp). This means that rbp can then be used for referring to anything local to the functions stack frame.
+Concerning stack frames, we only care about stack operations and things involving the rsp, and rbp registers. The "pushq %rbp" instruction, is what does this. It then takes the current value of the stack (rsp) and copies it into the stack frame register (rbp). This means that rbp can then be used for referring to anything local to the functions stack frame.
 
 Pushing onto the stack advances the stack and copies the value into the resulting memory address. Since the stack frame is copied into the rbp register this means that rbp points to the calling functions stack frame.
 
@@ -93,3 +91,27 @@ I have a function declared inside another function. This is not standard C:
 
   innerFunction();
 </code></pre>
+
+Ah ha! This will produce a stack frame, and also reference a variable that's out of a local scope.
+
+<pre class="src"><code><span class="function-name">innerFunction</span>.2206:
+<span class="function-name">.LFB2</span>:
+    <span class="keyword">pushq</span>   <span class="variable-name">%rbp</span>            <span class="comment-delimiter">// </span><span class="comment">Push the previous stackframe onto the stack.
+</span>    <span class="keyword">movq</span>    <span class="variable-name">%rsp</span>, <span class="variable-name">%rbp</span>      <span class="comment-delimiter">// </span><span class="comment">Save this function's stack frame.
+</span>    <span class="keyword">movq</span>    <span class="variable-name">%r10</span>, <span class="variable-name">%rax</span>      <span class="comment-delimiter">// </span><span class="comment">Wait a minute....
+</span>    <span class="keyword">movl</span>    (<span class="variable-name">%rax</span>), <span class="variable-name">%eax</span>    <span class="comment-delimiter">// </span><span class="comment">Set up for call to printf
+</span>    <span class="keyword">movl</span>    <span class="variable-name">%eax</span>, <span class="variable-name">%esi</span>
+    <span class="keyword">movl</span>    $.LC1, <span class="variable-name">%edi</span>
+    <span class="keyword">movl</span>    $0, <span class="variable-name">%eax</span>
+    <span class="keyword">call</span>    printf          <span class="comment-delimiter">// </span><span class="comment">Push address of next instruction onto
+</span>                            <span class="comment-delimiter">// </span><span class="comment">the stack and jumps to printf.
+</span>    <span class="keyword">popq</span>    <span class="variable-name">%rbp</span>            <span class="comment-delimiter">// </span><span class="comment">Pop off old rbp from stack into rbp.
+</span>    <span class="keyword">ret</span>                     <span class="comment-delimiter">// </span><span class="comment">Pop address off the stack and return to it.</span></code></pre>
+
+But, it doesn't seem to have worked as I would have thought. In particular where it actually gets the value of the variable, "movq %r10, %rax". Damnit! If I go tracing back before the function was called, we come across:
+
+<pre class="src"><code>    <span class="keyword">leaq</span>    -16(<span class="variable-name">%rbp</span>), <span class="variable-name">%rax</span>     <span class="comment-delimiter">// </span><span class="comment">Load z into rax register.
+</span>    <span class="keyword">movq</span>    <span class="variable-name">%rax</span>, <span class="variable-name">%r10</span>          <span class="comment-delimiter">// </span><span class="comment">Copy rax to r10 register.
+</span>    <span class="keyword">movl</span>    $0, <span class="variable-name">%eax</span>            <span class="comment-delimiter">// </span><span class="comment">Void function.
+</span>    <span class="keyword">call</span>    innerFunction.2206  <span class="comment-delimiter">// </span><span class="comment">Save next address onto stack, jump to innerFunction.
+</span></code></pre>
