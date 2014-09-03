@@ -115,3 +115,5 @@ But, it doesn't seem to have worked as I would have thought. In particular where
 </span>    <span class="keyword">movl</span>    $0, <span class="variable-name">%eax</span>            <span class="comment-delimiter">// </span><span class="comment">Void function.
 </span>    <span class="keyword">call</span>    innerFunction.2206  <span class="comment-delimiter">// </span><span class="comment">Save next address onto stack, jump to innerFunction.
 </span></code></pre>
+
+The compiler is being tricky and it pre-loading a register with the address of the variable beforehand, this is not traversing the stack frames as I would hope.
