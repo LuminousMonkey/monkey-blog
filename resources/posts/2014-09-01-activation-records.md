@@ -116,4 +116,4 @@ But, it doesn't seem to have worked as I would have thought. In particular where
 </span>    <span class="keyword">call</span>    innerFunction.2206  <span class="comment-delimiter">// </span><span class="comment">Save next address onto stack, jump to innerFunction.
 </span></code></pre>
 
-The compiler is being tricky and it pre-loading a register with the address of the variable beforehand, this is not traversing the stack frames as I would hope.
+The compiler is being tricky and it pre-loading a register with the address of the variable beforehand, this is not traversing the stack frames as I would hope. So I have to try and get another contrived example going.
