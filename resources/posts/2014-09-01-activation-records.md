@@ -50,7 +50,7 @@ We can see that 22 is being loaded onto our stack, the "movl $22, -12(%rbp)" bit
 
 The variable x that is scoped outside this block, in the main function itself has the index -4. So this means we have the following stack:
 
-<img src="images/2014-09-01/stack_pic_1.png" width="640" height="384">
+<img src="/images/2014-09-01/stack_pic_1.png" width="640" height="384">
 
 All through this bit of code we can't see anything other than indexed stack load and stores, so this means no activation records. With a call to a function (call outerFunction), we will see the creation of a new stack frame.
 
@@ -76,7 +76,7 @@ Concerning stack frames, we only care about stack operations and things involvin
 
 Pushing onto the stack advances the stack and copies the value into the resulting memory address. Since the stack frame is copied into the rbp register this means that rbp points to the calling functions stack frame.
 
-<img src="images/2014-09-01/stack_pic_2.png" width="640" height="651">
+<img src="/images/2014-09-01/stack_pic_2.png" width="640" height="651">
 
 However, we are still not getting any traversal of any of these stack frames, at least nothing that would indicate anything about dynamic or static activation records. The problem seems to be that you need to try and access variables outside your scope across stack frame boundaries. You can't do this with C, sure, you have global scope, but that doesn't have a stack frame, any globals will be referenced directly.
 
