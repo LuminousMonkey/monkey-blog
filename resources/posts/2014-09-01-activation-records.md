@@ -2,9 +2,9 @@
 title: Trying to understand activation records.
 ---
 
-It's interesting to see the development of programming languages over time, in particular to see how programming languages influenced the development of the underlying hardware. I'm currently studying programming languages at Uni, and the majority of the course is the study of past programming languages. We've started off with Pseudo-codes (very early assembly type language), and progressed from there. FORTRAN, ALGOL, Pascal, and some other languages mentioned off-hand.
+It's interesting to see the development of programming languages over time, in particular to see how programming languages influenced the development of the underlying hardware. I'm currently studying programming languages at Uni, and the majority of the course is the study of past programming languages. We've started off with Pseudo-codes (very early assembly type language), and progressed from there. FORTRAN, ALGOL, Pascal, and some other languages are mentioned off-hand.
 
-It's interesting to note that early computers didn't have the concept of the stack, that wonderful little memory space that the processor can use for keeping track of where it's been, and what it's doing (in the context of the current running function). The concept of the stack came about as the result of programming languages. In particular, the block structure of ALGOL called for the tracking of both static and dynamic "activation records". Best I can figure out is that this is what's known as the [call stack](http://en.wikipedia.org/wiki/Call_stack).
+It's interesting to note that early computers didn't have the concept of the stack, that wonderful little memory space that the processor can use for keeping track of where it has been, and what it's doing (in the context of the current running function). The concept of the stack came about as the result of programming languages. In particular, the block structure of ALGOL called for the tracking of both static and dynamic "activation records". Best I can figure out is that this is what's known as the [call stack](http://en.wikipedia.org/wiki/Call_stack).
 
 But, I'm just not quite sure how exactly these static and dynamic activation records are supposed to work. In particular the idea of traversing the stack to go and find variables that are outside the scope of the current block. I know that global variables cover this, but, as far as I'm aware, the direct address of the global variable is used. So, to help with my understanding, I wrote a [contrived C program](https://gist.github.com/LuminousMonkey/eb47b9b1f283d1d8838b) and went through the assembly code that resulted.
 
@@ -110,10 +110,14 @@ Ah ha! This will produce a stack frame, and also reference a variable that's out
 
 But, it doesn't seem to have worked as I would have thought. In particular where it actually gets the value of the variable, "movq %r10, %rax". Damnit! If I go tracing back before the function was called, we come across:
 
-<pre class="src"><code>    <span class="keyword">leaq</span>    -16(<span class="variable-name">%rbp</span>), <span class="variable-name">%rax</span>     <span class="comment-delimiter">// </span><span class="comment">Load z into rax register.
+<pre class="src"><code>    <span class="keyword">leaq</span>    -16(<span class="variable-name">%rbp</span>), <span class="variable-name">%rax</span>     <span class="comment-delimiter">// </span><span class="comment">Load z's address into rax register.
 </span>    <span class="keyword">movq</span>    <span class="variable-name">%rax</span>, <span class="variable-name">%r10</span>          <span class="comment-delimiter">// </span><span class="comment">Copy rax to r10 register.
 </span>    <span class="keyword">movl</span>    $0, <span class="variable-name">%eax</span>            <span class="comment-delimiter">// </span><span class="comment">Void function.
 </span>    <span class="keyword">call</span>    innerFunction.2206  <span class="comment-delimiter">// </span><span class="comment">Save next address onto stack, jump to innerFunction.
 </span></code></pre>
 
-The compiler is being tricky and it pre-loading a register with the address of the variable beforehand, this is not traversing the stack frames as I would hope. So I have to try and get another contrived example going.
+The compiler is being tricky, rather than traverse back through to the previous stack frame, it loads the memory address of the variable into a register. This register is used to effectively pass in a reference to the variable which is on the caller's stack frame. I'm guessing it can do this hard coding of register passing because it's an internal function, so it's not like the scope of innerFunction is going to change, because C doesn't support dynamic scoping.
+
+Effectively it seems that C itself only supports static active records, and even then any operations in the functions will not traverse the stack, a function will not use the pointer to the previous stack frame to look back at variables. Thanks to the normal C scoping rules, there's no need. I can only force the issue via GNU only internal functions, and even then variables are just passed as per any normal sort of function parameter passing (although it uses one of the misc registers as per the [userful info on X64_64 ABI](http://www.classes.cs.uchicago.edu/archive/2009/spring/22620-1/docs/handout-03.pdf)).
+
+I suspect any backtracking of activate records will require looking at a language that has a sort of dynamic binding, which I hope to follow up in a later post.
