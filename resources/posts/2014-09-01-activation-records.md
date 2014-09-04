@@ -10,7 +10,7 @@ But, I'm just not quite sure how exactly these static and dynamic activation rec
 
 I compiled with GCC on an Arch Linux install, with 64bit compilation. Just using -S to generate the [assembly in AT&T syntax](https://gist.github.com/LuminousMonkey/d2ecacc615cb798a8f16). (operator source destination)
 
-When I say contrived, I mean it, even if variables within a block have the same name, the compiler will just allocate them on the stack normally. I wanted to test to see if statement blocks created an activation record, so I have:
+When I say contrived, I mean it, I've plonked a statement block in the middle of main, all by itself. I've even used, *gasp*, GCC extensions that aren't standard C, something I loathe to do. Anyway, I wanted to test to see if statement blocks created an activation record, so I have:
 
 <pre class="src"><code>{
     <span class="type">int</span> <span class="variable-name">x</span> = 22;
@@ -118,6 +118,6 @@ But, it doesn't seem to have worked as I would have thought. In particular where
 
 The compiler is being tricky, rather than traverse back through to the previous stack frame, it loads the memory address of the variable into a register. This register is used to effectively pass in a reference to the variable which is on the caller's stack frame. I'm guessing it can do this hard coding of register passing because it's an internal function, so it's not like the scope of innerFunction is going to change, because C doesn't support dynamic scoping.
 
-Effectively it seems that C itself only supports static active records, and even then any operations in the functions will not traverse the stack, a function will not use the pointer to the previous stack frame to look back at variables. Thanks to the normal C scoping rules, there's no need. I can only force the issue via GNU only internal functions, and even then variables are just passed as per any normal sort of function parameter passing (although it uses one of the misc registers as per the [userful info on X64_64 ABI](http://www.classes.cs.uchicago.edu/archive/2009/spring/22620-1/docs/handout-03.pdf)).
+Effectively it seems that C itself only supports static activation records, and even then any operations in the functions will not traverse the stack, a function will not use the pointer to the previous stack frame to look back at variables. Thanks to the normal C scoping rules, there's no need. I can only force the issue via GNU only internal functions, and even then variables are just passed as per any normal sort of function parameter passing (although it uses one of the misc registers as per the [useful info on X64_64 ABI](http://www.classes.cs.uchicago.edu/archive/2009/spring/22620-1/docs/handout-03.pdf)).
 
-I suspect any backtracking of activate records will require looking at a language that has a sort of dynamic binding, which I hope to follow up in a later post.
+I suspect any backtracking of activation records will require looking at a language that has a sort of dynamic binding, which I hope to follow up in a later post.
