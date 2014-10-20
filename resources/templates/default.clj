@@ -5,7 +5,8 @@
                                (:site-title (static.config/config)))
                        (str (:title metadata) " | "))
                      (:site-title (static.config/config)))]
-        [:link {:rel "stylesheet" :type "text/css" :href "/default.css"}]]
+        [:link {:rel "stylesheet" :type "text/css" :href "/default.css"}]
+        [:link {:rel "alternate" :type "application/rss+xml" :href "/rss-feed/"}]]
        [:body
         [:script
          "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
