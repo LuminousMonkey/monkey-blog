@@ -58,3 +58,14 @@ Apparently the static site generator I use supports Org Mode. So, this is a test
 #+end_src
 
 In line [[(sc)]] we remember the current position. [[(jump)][Line (jump)]] jumps to point-min.
+
+This should have some math...
+
+Foo bar \(f(x) = \frac{x^3}{n}\) chicken checken.
+
+\begin{equation}
+x=\sqrt{b}
+\end{equation}
+
+If $a^2=b$ and \( b=2 \), then the solution must be
+either $$ a=+\sqrt{2} $$ or \[ a=-\sqrt{2} \].

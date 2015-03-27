@@ -16,6 +16,7 @@
 
   ga('create', 'UA-10192128-1', 'auto');
   ga('send', 'pageview');"]
+        [:script {:type "text/javascript" :src "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"}]
         [:div#wrapper
          [:div#masthead
           [:h1 (:site-title (static.config/config))]
