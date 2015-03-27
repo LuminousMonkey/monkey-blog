@@ -1,0 +1,172 @@
+#+title: What is a Monad like a writing desk?
+#+date: 2015-03-27T22:43:00Z
+
+I have seen this talk, however, given that someone I know was recently asked about monads in an interview, I thought it best to link to it here so I can find it later.
+
+[[http://www.infoq.com/presentations/Why-is-a-Monad-Like-a-Writing-Desk][What is a Monad like a writing desk?]]
+
+Even if you're not interested in monads, you should watch this talk, because it tells a story. Talks are not about dense information, but are about getting people interested in the subject.
+
+What follows are my own notes, for no other reason, but for me to follow along and try to understand.
+
+Monadic return operation:
+
+#+begin_src clojure
+  (defn return [v] (fn [] v))
+#+end_src
+
+You define a function that takes a value and wraps that value in a function. When that function is executed, it returns the value.
+
+#+begin_src clojure
+  ((return "jelly")) ;=> "jelly"
+#+end_src
+
+This is not a monadic return, because the value is not wrapped up in a function:
+
+#+begin_src clojure
+  (defn return [v] v)
+
+  (return "jelly") ;=> jelly
+#+end_src
+
+Monadic bind operation:
+
+#+begin_src clojure
+  (defn bind [mv f] (f (mv)))
+
+  (defn with-toast [s]
+    (return (str "toast & " s)))
+
+  (bind (return "jelly") with-toast)
+  ;=> container/monadic value (Our value wrapped in a function)
+
+  ((bind (return "jelly") with-toast))
+  ;=> "toast & jelly"
+#+end_src
+
+Bind will take a monadic value, and a function, calling the monadic value so it will get the actual value, and pass that in as a parameter. The function passed into bind must be a monadic value (wrapped in a function.)
+
+Ok, I follow this, but... why?
+
+Can you write a function that makes you grow and returns a monadic value. Sure:
+
+#+begin_src clojure
+  (return "me")
+
+  (defn grow [s]
+    (return (str s (last s))))
+
+  (grow "me") ;=> monadic value
+
+  ((grow "me")) ;=> "mee"
+#+end_src
+
+Using bind to grow:
+
+#+begin_src clojure
+  (defn m-grow [mv]
+    (bind mv grow))
+
+  ((m-grow (return "me"))) ;=> "mee"
+#+end_src
+
+Ok, and you can chain them... but what is the purpose? What is the benefit?
+Handling of nil. With modifications to bind, you can have monadic operations occur with nil, that don't blow up. Instead it could pass though a call chain, and return nil wrapped in a monadic value.
+
+Monads are like astronauts, monads are like burritos. Yeah, what the hell are they on about?
+
+Updating of return and bind, so they can include state:
+
+#+begin_src clojure
+  ;; Will now return a monadic value that needs a parameter.
+  (defn return [v]
+    (fn [s] [v s]))
+
+  ;; Same here
+  (defn bind [mv f]
+    (fn [s]
+      (let [[v sn] (mv s)]
+        ((f v) sn))))
+#+end_src
+
+There was a tea function, which I haven't written down, but it's used again without modification here.
+
+#+begin_src clojure
+  (defn m-tea [mv name]
+    (bind mv (fn [v]
+               (return (str v " and " name)))))
+
+  ((-> (return "me") (m-tea "you")) 10)
+  ;=> ["me and you" 10]
+#+end_src
+
+So, we can track state.
+
+#+begin_src clojure
+  (defn take-sugar [mv]
+    (bind mv (fn [v]
+               (fn [s] [v (sec s)]))))
+#+end_src
+
+Seems to be all about using closures for state and composing operations?
+
+Identity monad: return, bind.
+
+Maybe monad: The handling of nil.
+
+#+begin_src clojure
+  (defn bind [mv f]
+    (let [v (mv)]
+      (if (nil? v)
+        (return nil)
+        (f v))))
+#+end_src
+
+State monad: Tea.
+
+Things in common:
+
+Left Unit - "return" acts as a neutral element of bind.
+
+#+begin_src clojure
+  (bind (return v) f) ; same as (f v)
+
+  (defn return [v] (fn [] v))
+  (defn bind [mv f] (f (mv)))
+
+  (defn grow [s] (return (str s (str (last s)))))
+
+  ((bind (return "me") "grow")) ;=> "mee"
+  ((grow "me"))                 ;=> "mee"
+#+end_src
+
+Right Unit - "return" acts as a neutral element of bind.
+
+#+begin_src clojure
+  (bind mv return) ; same as mv
+
+  (defn return [v] (fn [] v))
+  (defn bind [mv f] (f (mv)))
+
+  (defn grow [s] (return (str s (str (last s)))))
+
+  ((bind (return "me") return)) ;=> "me"
+  ((return "me"))               ;=> "me"
+#+end_src
+
+Associative - Binding two functions in succession is the same as binding one function that can be determined from them.
+
+#+begin_src clojure
+  (bind (bind mv f) g) ;same as (bind mv (fn [x] (bind (f x) g)))
+
+  (defn return [v] (fn [] v))
+  (defn bind [mv f] (f (mv)))
+
+  (defn grow [s] (return (str s (str (last s)))))
+
+  ((bind (bind (return "me") grow) grow)) ;=> "meee"
+  ((bind (return "me")
+         (fn [v] (bind (grow v) grow))))  ;=> "meee"
+#+end_src
+
+Monads are all about keeping inside functions pure and having messy stuff on the outside.
