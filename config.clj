@@ -12,10 +12,15 @@
  :blog-as-index true
  :emacs "/usr/bin/emacs"
  :org-export-command "(progn
-                       (package-initialize)
-                       (require 'use-package)
-                       (require 'ox-html)
-                       (use-package clojure-mode)
+                       (eval-and-compile
+                         (mapc
+                          #'(lambda (path)
+                              (push (expand-file-name path user-emacs-directory) load-path))
+                          '(\"site-lisp\" \"site-lisp/use-package\" \"override\" \"lisp\")))
+                       (eval-and-compile
+                         (require 'use-package)
+                         (require 'ox-html))
+                       (use-package clojure-mode :load-path \"site-lisp/clojure-mode\")
                        (setq org-html-htmlize-font-prefix \"\")
                        (setq org-html-htmlize-output-type 'css)
                        (org-html-export-as-html nil nil nil t nil)
