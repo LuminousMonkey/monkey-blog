@@ -24,8 +24,10 @@ a {
 
     h1, h2, h3, h4, h5, h6 {
         color: #ebe5ff;
-        font-family: "Helvetica Neue", Arial, Helvetica, "Nimbus Sans L", sans-serif;
-        font-weight: bold;
+        font-family: "Open Sans", "DejaVu Sans", sans-serif;
+        font-weight: 300;
+        font-style: normal;
+        text-rendering: optimizeLegibility;
         line-height: 1.5em;
         margin: 0 0 20px 0;
     }
