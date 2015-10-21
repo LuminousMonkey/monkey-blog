@@ -1,0 +1,4 @@
+#+title: First Year of Computer Science
+#+date: 2015-10-22
+
+Your first year of computer science, congratulations. Let me tell you this. No matter how good think you are, there is far more to computer science than you know about. You might know C, C++, Haskell, blah, blah. You might have committed code to the Linux kernel, but know this, you know only a sliver. So don't be an arrogant prick.
