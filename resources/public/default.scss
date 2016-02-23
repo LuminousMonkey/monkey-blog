@@ -187,13 +187,13 @@ blockquote {
     margin-bottom: 18px;
     padding-left: 10px;
     padding-right: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
     line-height: 1.4em;
-    background-color: #f3f3f3;
-    border-left: 2px solid #8890a5;
-    }
+    color: #ffaf3e;
+    border-left: 2px solid #ffaf3e;}
 
+blockquote > p {
+  white-space: pre;
+}
 
 pre {
     color: #222;

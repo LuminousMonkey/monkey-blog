@@ -1,0 +1,11 @@
+#+title: Wacom Drawing Tablet
+#+date: 2002-07-22
+
+I have to say, drawing tablets rock!
+
+Not only for actual drawing, but for general use of the computer. If only it could also be a high res display as well…
+
+Anyhow, here’s my first pic using the tablet.
+
+#+attr_html: :width 100px
+[[img:2002-07-22/myfirsttabletpic.gif][My first tablet pic]]
