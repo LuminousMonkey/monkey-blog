@@ -1,0 +1,32 @@
+#+title: I don't like ORM
+#+date: 2016-03-18
+
+I'm not a database guru, and I don't have an extensive knowledge of SQL, and that's why I don't like ORM. I don't like ORM because it's an abstraction developers use because they don't want to go near SQL for various reasons. But! That doesn't mean you shouldn't be using ORM in some cases, for example, if you're writing a Rails application, or Django, and you're not doing (or going to eventually do) anything outside the typical scope of these frameworks.
+
+The problem is, that these frameworks abstract away advanced features that a database offers (because they have give the same interface over a wide range of databases) and tend to end up treating the database on the lowest common denominator.
+
+So, I write using all the features of the database I've selected, because I'm not planning on moving between databases. It'll be pain to move to say Oracle, but really, how often does that actually happen? In the particular example I'm going to get into, I'm using PostgreSQL 9.5, because I need PostGIS. PostGIS is an extensive available to PostgreSQL that gives a bunch of GIS datatypes and functions, and is a good thing if you're dealing with, say, GPS data.
+
+Anyway, anyone who uses a database should know SQL, much like anyone who writes code should also know C. Even if you don't actually write software in it, you should know C, because it lets you understand what is going on under the covers.
+
+I'm short on time now, but, I will present two SQL queries, one takes a few seconds to run, the other is two magnitudes faster (for obvious reasons) and I believe demonstrates why you need to know SQL rather than relying on an ORM (not that an ORM made the slower query, but in my experience, correct me if I'm wrong, ORMs tend to do this as they can't read your mind):
+
+First, the slower query:
+
+#+begin_src sql
+  SELECT ST_Centroid(UNNEST(ST_Clusterwithin(location::geometry, 0.001))) AS grouped_location
+    FROM gps_readings
+   WHERE unit_id = 6
+     AND speed < 10
+#+end_src
+
+Now the one that is two magnitudes faster:
+
+#+begin_src sql
+  SELECT ST_Centroid(UNNEST(ST_Clusterwithin(location::geometry, 0.01))) AS grouped_location
+    FROM
+      (SELECT DISTINCT location
+         FROM gps_readings
+        WHERE unit_id = 3
+          AND speed = 0) clus_loc_filter;
+#+end_src
