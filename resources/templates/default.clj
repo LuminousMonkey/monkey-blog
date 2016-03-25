@@ -16,7 +16,7 @@
 
   ga('create', 'UA-10192128-1', 'auto');
   ga('send', 'pageview');"]
-        [:script {:type "text/javascript" :src "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"}]
+        [:script {:type "text/javascript" :src "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"}]
         [:div#wrapper
          [:div#masthead
           [:h1 (:site-title (static.config/config))]
@@ -54,18 +54,4 @@
               [:div.post.hentry
                [:h2.entry-title
                 [:a {:href (:url metadata)} (:title metadata)]]])
-            content
-
-            (if (= :post (:type metadata))
-              [:div#disqus_thread])]]]]
-
-        (if (= :post (:type metadata))
-          [:script {:type "text/javascript"}
-          "var disqus_shortname = 'luminousmonkey';
-        (function() {
-                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                                    })();
-                                    </script>
-                                    <noscript>Please enable JavaScript to view the <a href=\"https://disqus.com/?ref_noscript\" rel=\"nofollow\">comments powered by Disqus.</a>"])])
+            content]]]]])
