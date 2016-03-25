@@ -16,7 +16,7 @@
 
   ga('create', 'UA-10192128-1', 'auto');
   ga('send', 'pageview');"]
-        [:script {:type "text/javascript" :src "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"}]
+        [:script {:type "text/javascript" :src "//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"}]
         [:div#wrapper
          [:div#masthead
           [:h1 (:site-title (static.config/config))]
@@ -45,8 +45,7 @@
                 [:path {:d "M32.09 195.41h127.09L104.563 27.315c-2.81-8.65-15.047-8.65-17.856 0L32.09 195.41z" :fill "#e24329"} ""]
                 [:path {:d "M249.865 474.506L340.55 195.41h127.09L249.866 474.507z" :fill "#fc6d26"} ""]
                 [:path {:d "M467.64 195.41l27.56 84.815c2.512 7.736-.24 16.21-6.822 20.99l-238.514 173.29L467.64 195.41z" :fill "#fca326"} ""]
-                [:path {:d "M467.64 195.41H340.548l54.62-168.096c2.81-8.65 15.046-8.65 17.855 0L467.64 195.41z" :fill "#e24329"} ""]]]
-              ]]]]]
+                [:path {:d "M467.64 195.41H340.548l54.62-168.096c2.81-8.65 15.046-8.65 17.855 0L467.64 195.41z" :fill "#e24329"} ""]]]]]]]]
          [:div#main
           [:div#container
            [:div#content
