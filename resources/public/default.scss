@@ -251,15 +251,39 @@ textarea {
     letter-spacing: 0.1em;
 }
 
+#nav .social-list a svg {
+    transition:transform 0.1s;
+}
+
+#nav .social-list a:hover svg {
+    transform:translateY(-1px) scale(1.1,1.1);
+}
+
+.social-list {
+    position: absolute;
+    right: 4px;
+    top: 12px;
+}
+
+.icon>svg {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
 /* =bp-nav-menu
 -------------------------------------------------------------- */
 
-#nav li {
-    background: #707688;
+#nav {
+    position: relative;
 }
 
 #nav a {
     cursor: pointer;
+}
+
+#nav .social-list a {
+    margin-left: 8px;
 }
 
 #nav p {
@@ -268,12 +292,9 @@ textarea {
 
 div#nav ul {
     width: 100%;
-    background: #707688;
+    background: #303688;
     margin: 0;
     margin-top: 2px;
-    border-top: 1px solid #362652;
-    border-bottom: 1px solid #362652;
-    border-left: 1px solid #362652;
     list-style: none;
     position: relative;
     display: inline-block;
