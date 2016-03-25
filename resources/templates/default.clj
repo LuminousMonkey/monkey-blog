@@ -23,7 +23,8 @@
           [:div#nav
            [:ul
             [:li [:a {:href "/"} "Home"]]
-            [:li [:a {:href "/about.html"} "About"]]]
+            [:li [:a {:href "/about.html"} "About"]]
+            [:li [:a {:href "/archives/"} "Archives"]]]
            [:div.social-list
           [:a {:href "https://twitter.com/LuminousMonkey"}
            [:span.icon.icon--twitter

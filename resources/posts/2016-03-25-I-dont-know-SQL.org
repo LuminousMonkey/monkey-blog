@@ -1,0 +1,114 @@
+#+title: I don't know SQL
+#+date: 2016-03-25
+
+I mentioned in the previous post that I'm not a database guru, luckily I haven't actually had to do a great deal of complex SQL queries. Which, is a shame in a way, because I was working on a particular SQL query this week just past, and it was interested. I learned a few things about PostgreSQL that I think make it *the* database to select when starting a project.
+
+Of course I know that SQL Server and Oracle would have these features, but I would be honestly surprised if MySQL did. I'm constantly surprised by how many projects use/support MySQL when it really is the inferior database to PostgreSQL. Again, I would argue that it's because ORM frameworks abstract away useful distinguishing features of the underlying database. But, I could obviously be wrong... unless you're dealing with GIS data, such as I am with my recent project.
+
+It's an application that reads and stores GPS data from a Tait DMR network. The specifics aren't too important, but, basically, every thirty seconds we get a GPS location for a fleet of vehicles that we store in a database for querying. You could just get the decimal latitude and longitudes and store them in any database, but then when you try to do something with the data, it can get difficult.
+
+For example, we have a customer, who wants to track the time that his employees are onsite. This is so he can charge his customer the correct amount. The thing is, when you get a GPS reading, it may be different. If they drive off for lunch, then head back, it would be a fine trick for them to get the *exact* GPS reading again.
+
+Thankfully, the PostGIS extension for PostgreSQL gives datatypes and functions to help with this.
+
+First, the table definition for the GPS readings:
+
+#+begin_src sql
+  CREATE TABLE gps_readings (
+    location GEOGRAPHY(POINT,4326) NOT NULL,
+    speed integer NOT NULL,
+    time_and_date timestamp NOT NULL,
+    unit_id integer REFERENCES units(id) ON UPDATE CASCADE,
+    PRIMARY KEY (time_and_date, unit_id)
+  );
+#+end_src
+
+Nothing really too surprising here, just the geography type that PostGIS gives you. With GIS geography data, there's different ways you can do data projections, since you're trying to map a coordinate system of a spheroid (the Earth). GPSs return data in decimal latitude and longitude (WGS84, which is the same system used by Google maps), this means you're trying to use a Cartesian system to map onto a sphere. This results in distortion, if you've ever seen a 2D map of the Earth, you can see how massive Greenland is, even though it's a tiny country. That's a result of the distortion.
+
+PostGIS uses the geography type to keep track of what system you're using, in this case I'm using SRID 4326. Which I believe is the expected GPS coordinate system.
+
+Anyway, basically, I have to get all the locations of the vehicle and group them into clusters, with the clusters being within a certain radius of each other. Actually, I'll just include the code here, since I already commented what it does...
+
+#+begin_src sql
+  --- The following is a pretty messy SQL query.
+  --- How it works as follows:
+  ---
+  --- First, it takes all the distinct gps readings for a unit where the
+  --- unit hasn't been moving. It then does cluster analysis of these
+  --- groups to organise them into clusters.
+  ---
+  --- Then, the gps readings for the units are taken, each reading being
+  --- compared to each cluster, basically associating each reading with
+  --- the corresponding cluster. With the clusters generalised to a
+  --- common point.
+  ---
+  --- Then these results are parsed through using windows, with the
+  --- window, the current grouped_location is compared with the last
+  --- grouped_location. If they are different, it means that the vehicle
+  --- has moved out of a cluster, so the time of the current record must
+  --- be the starting time of movement into a new location.
+  ---
+  --- Then end_time is then calculated by looking ahead for a change in
+  --- location (meaning the record is the last reading inside the current
+  --- location).
+  ---
+  --- This gives us start and end times, but with a few readings when the
+  --- unit was inside the location. They are removed, and a final window
+  --- is used to put the end_time into the same row as the start_time (so
+  --- we just end up with a single grouped_location with a start and end
+  --- time). Rows with the same start and end time are removed, before we
+  --- finally return the grouped_location, start, end, and total times.
+  ---
+  --- Because of the way the Clojure JDBC works, and because we use the
+  --- same parameters for two different subqueries, the same arguments
+  --- need to be substituted in twice.
+  ---
+  --- They are, unit_id, start_date, end_date, unit_id, start_date, end_date.
+  SELECT ST_Y(grouped_location) AS latitude,
+            ST_X(grouped_location) AS longitude,
+            start_time, end_time, end_time - start_time AS total_time
+    FROM
+      (SELECT grouped_location, start_time,
+         CASE WHEN ST_Equals((lead(grouped_location) OVER tadw),grouped_location)
+                   AND lead(end_time) OVER tadw IS NOT NULL
+                   THEN lead(end_time) OVER tadw
+              WHEN end_time IS NOT NULL THEN end_time
+            END AS end_time
+         FROM
+           (SELECT *,
+                CASE WHEN lag(grouped_location) OVER tadw IS NULL
+                          THEN time_and_date
+                     WHEN ST_Equals((lag(grouped_location) OVER tadw),grouped_location)
+                          THEN NULL
+                     WHEN NOT ST_Equals((lag(grouped_location) OVER tadw),grouped_location)
+                          THEN time_and_date
+                END AS start_time,
+                CASE WHEN NOT ST_Equals((lead(grouped_location) OVER tadw),grouped_location)
+                          THEN time_and_date
+                     ELSE NULL
+                END AS end_time
+              FROM
+                (SELECT ST_Centroid(UNNEST(ST_Clusterwithin(location::geometry, 0.01))) AS grouped_location
+                   FROM
+                     (SELECT DISTINCT location
+                        FROM gps_readings
+                       WHERE unit_id = ?
+                         AND speed = 0) AS clus_loc_filter) AS clusters
+  INNER JOIN gps_readings
+          ON (ST_DWithin(clusters.grouped_location, gps_readings.location::geometry, 0.01)
+             AND unit_id = ? AND speed = 0)
+            WINDOW tadw AS (ORDER BY time_and_date)) AS tbl_start_times
+             WHERE ((start_time IS NOT NULL) OR (end_time IS NOT NULL))
+      WINDOW tadw AS (ORDER BY time_and_date)) AS tbl_end_times
+   WHERE (start_time IS NOT NULL AND (start_time <> end_time)
+      OR end_time is null)
+     AND (end_time - start_time) > interval '5 minutes';
+#+end_src
+
+The question marks aren't part of the SQL, since I'm using Clojure JDBC, they're where the unit id for the vehicle gets substituted in. Again, I think that there is room for improvement here. Simply because I haven't used enough SQL to learn the best way to approach this. As it stands, I'm pretty happy with it.
+
+On the low-end VM (Linux, 2GB RAM) PostgreSQL is running on, it will get the result in about 1100ms, that's reading all the GPS position data for that unit in the system. It's been collecting the GPS data since the 11th of March 2016, which is about 20,000 rows.
+
+Considering the ClusterWithin function it's running, that's not too bad, it was a bit slower than that without that DISTINCT that I mentioned in my last post. Also, it should get faster, since I haven't added date ranges to restrict the number of rows searched.
+
+So, in summary, if you use MySQL, you should be using PostgreSQL and you should be taking advantage of the database features where possible, you can do some pretty cool stuff with those Window functions. I just wonder how many web applications using frameworks are missing out on easy performance gains because they've got sloppy SQL queries.
