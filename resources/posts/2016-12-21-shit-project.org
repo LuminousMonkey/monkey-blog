@@ -1,0 +1,8 @@
+#+title: Shit Project
+#+date: 2016-12-21
+
+So, I've been a bit busy lately, so much so, that I had to defer a semester of Uni. The reason? I've had to manage the installation of a bunch of GPS trackers for a large state government organisation. It's been, in a word, shit.
+
+I inherited the management from someone, who, basically, didn't do much except attempt to make pretty graphs of unrealistic timelines in Microsoft Project. They left, so I was thrown into the project. Now, even though it's not related to a software project, you still have the same sort of things that projects get (funny that).
+
+So, I will write a few blog posts, when I can, to cover just some minor things that I found.
