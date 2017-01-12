@@ -16,8 +16,12 @@
                          (mapc
                           #'(lambda (path)
                               (push (expand-file-name path user-emacs-directory) load-path))
-                          '(\"site-lisp\" \"site-lisp/use-package\" \"override\" \"lisp\")))
+                          '(\"site-lisp\" \"override\" \"lisp\")))
                        (eval-and-compile
+                         (package-initialize)
+                         (unless (package-installed-p 'use-package)
+                           (package-refresh-contents)
+                           (package-install 'use-package))
                          (require 'use-package)
                          (require 'ox-html))
                        (defun org-custom-link-img-follow (path)
@@ -28,7 +32,7 @@
                           ((eq format 'html)
                            (format \"<img src=\\\"/images/%s\\\" alt=\\\"%s\\\">\" path desc))))
                        (org-add-link-type \"img\" 'org-custom-link-img-follow 'org-custom-link-img-export)
-                       (use-package clojure-mode :load-path \"site-lisp/clojure-mode\")
+                       (use-package clojure-mode)
                        (setq org-html-htmlize-font-prefix \"\")
                        (setq org-html-htmlize-output-type 'css)
                        (org-html-export-as-html nil nil nil t nil)
