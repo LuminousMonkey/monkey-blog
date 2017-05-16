@@ -19,10 +19,10 @@
                        (package-refresh-contents)
                        (package-install 'use-package))
               '(require 'use-package)
-              '(require 'ox-html)
               '(use-package clojure-mode)
               '(use-package clojure-mode-extra-font-locking)
               '(use-package org :ensure t)
+              '(require 'ox-html)
               '(defun org-custom-link-img-follow (path)
                  (org-open-file-with-emacs
                   (format "../images/%s" path)))

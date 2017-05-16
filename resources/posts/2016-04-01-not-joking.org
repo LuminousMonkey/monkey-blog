@@ -3,6 +3,6 @@
 
 Jonathan Blow of Software Quality, you should watch this if you're interested in writing software. I used to have an Amiga, and to be honest, it was far more responsive than my current beast of a PC.
 
-#+begin_html
+#+begin_export html
 <iframe width="560" height="315" src="https://www.youtube.com/embed/k56wra39lwA" frameborder="0" allowfullscreen></iframe>
-#+end_html
+#+end_export
