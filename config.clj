@@ -11,30 +11,25 @@
  :posts-per-page 5
  :blog-as-index true
  :emacs "/usr/bin/emacs"
- :org-export-command "(progn
-                       (eval-and-compile
-                         (mapc
-                          #'(lambda (path)
-                              (push (expand-file-name path user-emacs-directory) load-path))
-                          '(\"site-lisp\" \"override\" \"lisp\")))
-                       (eval-and-compile
-                         (package-initialize)
-                         (unless (package-installed-p 'use-package)
-                           (package-refresh-contents)
-                           (package-install 'use-package))
-                         (require 'use-package)
-                         (require 'ox-html))
-                       (defun org-custom-link-img-follow (path)
-                         (org-open-file-with-emacs
-                          (format \"../images/%s\" path)))
-                       (defun org-custom-link-img-export (path desc format)
-                         (cond
-                          ((eq format 'html)
-                           (format \"<img src=\\\"/images/%s\\\" alt=\\\"%s\\\">\" path desc))))
-                       (org-add-link-type \"img\" 'org-custom-link-img-follow 'org-custom-link-img-export)
-                       (use-package clojure-mode)
-                       (setq org-html-htmlize-font-prefix \"\")
-                       (setq org-html-htmlize-output-type 'css)
-                       (org-html-export-as-html nil nil nil t nil)
-                       (with-current-buffer \"*Org HTML Export*\"
-                         (princ (org-no-properties (buffer-string)))))"]
+ :emacs-eval ['(package-initialize)
+              '(add-to-list 'package-archives '(("elpa" . "http://tromey.com/elpa/")
+                                                ("gnu" . "http://elpa.gnu.org/packages/")
+                                                ("marmalade" . "http://marmalade-repo.org/packages/")))
+              '(unless (package-installed-p 'use-package)
+                       (package-refresh-contents)
+                       (package-install 'use-package))
+              '(require 'use-package)
+              '(require 'ox-html)
+              '(use-package clojure-mode)
+              '(use-package clojure-mode-extra-font-locking)
+              '(use-package org :ensure t)
+              '(defun org-custom-link-img-follow (path)
+                 (org-open-file-with-emacs
+                  (format "../images/%s" path)))
+              '(defun org-custom-link-img-export (path desc format)
+                 (cond
+                   ((eq format 'html)
+                    (format "<img src=\"/images/%s\" alt=\"%s\">" path desc))))
+              '(org-add-link-type "img" 'org-custom-link-img-follow 'org-custom-link-img-export)
+              '(setq org-html-htmlize-font-prefix "")
+              '(setq org-html-htmlize-output-type 'css)]]
