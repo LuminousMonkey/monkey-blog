@@ -13,6 +13,13 @@ a {
     }
 }
 
+body, p {
+  font-family: "soleil", sans-serif;
+  font-size: 1.105rem;
+  line-height: 1.53;
+  font-weight: normal;
+  -webkit-text-size-adjust: 100%;}
+
 #container {
     float: left;
     margin: 0 -240px 0 0;
@@ -24,11 +31,8 @@ a {
 
     h1, h2, h3, h4, h5, h6 {
         color: #ebe5ff;
-        font-family: "Open Sans", "DejaVu Sans", sans-serif;
-        font-weight: 300;
-        font-style: normal;
+        font-weight: bold;
         text-rendering: optimizeLegibility;
-        line-height: 1.5em;
         margin: 0 0 20px 0;
     }
 
@@ -62,6 +66,9 @@ a {
     }
 
     .entry-meta {
+        font-family: "clavo", serif;
+        font-style: italic;
+        font-weight: 300;
         a:link, a:visited {
             color: #ffaf3e;
         }

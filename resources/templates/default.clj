@@ -2,11 +2,14 @@
        [:head
         [:meta {:charset "utf-8"}]
         [:title (str (if (not= (:title metadata)
-                               (:site-title (static.config/config)))
+                            (:site-title (static.config/config)))
                        (str (:title metadata) " | "))
                      (:site-title (static.config/config)))]
         [:link {:rel "stylesheet" :type "text/css" :href "/default.css"}]
-        [:link {:rel "alternate" :type "application/rss+xml" :href "/rss-feed/"}]]
+        [:link {:rel "alternate" :type "application/rss+xml" :href "/rss-feed/"}]
+        [:script {:type "text/javascript" :src "https://use.typekit.net/mry7vrs.js"}]
+        [:script {:type "text/javascript"}
+         "try{Typekit.load({ async: true });}catch(e){}"]]
        [:body
         [:script {:type "text/javascript"}
          "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -26,15 +29,15 @@
             [:li [:a {:href "/about.html"} "About"]]
             [:li [:a {:href "/archives/"} "Archives"]]]
            [:div.social-list
-          [:a {:href "https://twitter.com/LuminousMonkey"}
-           [:span.icon.icon--twitter
-            [:svg {:viewbox "0 0 16 16"}
-             [:path {:fill "#55acee" :d "M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809 c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"}]]]]
-          [:a {:href "https://stackoverflow.com/users/841/mike"}
-           [:span.icon.icon--stackoverflow
-            [:svg {:viewbox "0 0 12.56 14.84"}
-             [:polygon {:fill "#bcbbbb" :points "10.6 13.52 10.6 9.56 11.92 9.56 11.92 14.84 0 14.84 0 9.56 1.32 9.56 1.32 13.52 10.6 13.52"} ""]
-             [:path {:fill "#f48023" :d "M4.52,9.78L11,11.14l0.28-1.28L4.8,8.5ZM5.36,6.66l6,2.8,0.56-1.2-6-2.8ZM7,3.7l5.08,4.24,0.84-1L7.88,2.7Zm3.28-3.12-1.08.8,4,5.32,1.08-.8Zm-6,12.2H11V11.46H4.36v1.32Z" :transform "translate(-1.72 -0.58)"} ""]]]]
+            [:a {:href "https://twitter.com/LuminousMonkey"}
+             [:span.icon.icon--twitter
+              [:svg {:viewbox "0 0 16 16"}
+               [:path {:fill "#55acee" :d "M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809 c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"}]]]]
+            [:a {:href "https://stackoverflow.com/users/841/mike"}
+             [:span.icon.icon--stackoverflow
+              [:svg {:viewbox "0 0 12.56 14.84"}
+               [:polygon {:fill "#bcbbbb" :points "10.6 13.52 10.6 9.56 11.92 9.56 11.92 14.84 0 14.84 0 9.56 1.32 9.56 1.32 13.52 10.6 13.52"} ""]
+               [:path {:fill "#f48023" :d "M4.52,9.78L11,11.14l0.28-1.28L4.8,8.5ZM5.36,6.66l6,2.8,0.56-1.2-6-2.8ZM7,3.7l5.08,4.24,0.84-1L7.88,2.7Zm3.28-3.12-1.08.8,4,5.32,1.08-.8Zm-6,12.2H11V11.46H4.36v1.32Z" :transform "translate(-1.72 -0.58)"} ""]]]]
             [:a {:href "https://github.com/LuminousMonkey"}
              [:span.icon.icon--github
               [:svg {:viewbox "0 0 16 16"}
