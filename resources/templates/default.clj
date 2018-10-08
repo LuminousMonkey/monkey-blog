@@ -1,4 +1,4 @@
-(html5 {:lang "en"}
+(html5 {:lang "en" :prefix "og: http://ogp.me/ns#"}
        [:head
         [:meta {:charset "utf-8"}]
         [:title (str (if (not= (:title metadata)
@@ -6,6 +6,13 @@
                        (str (:title metadata) " | "))
                      (:site-title (static.config/config)))]
         [:meta {:name "description" :content (:description metadata)}]
+        [:meta {:name "twitter:card" :content "summary"}]
+        [:meta {:name "twitter:creator" :content "@LuminousMonkey"}]
+        [:meta {:property "og:title" :content (if (:title metadata)
+                                                (:title metadata)
+                                                (:site-title (static.config/config)))}]
+        [:meta {:property "og:description" :content (:description metadata)}]
+        [:meta {:property "og:image" :content "https://luminousmonkey.org/images/ProfilePicture.png"}]
         [:meta {:name "keywords" :content (:tags metadata)}]
         [:meta {:name "author" :content "Mike Aldred"}]
         [:link {:rel "stylesheet" :type "text/css" :href "/default.css"}]
