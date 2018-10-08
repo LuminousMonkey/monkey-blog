@@ -5,6 +5,9 @@
                             (:site-title (static.config/config)))
                        (str (:title metadata) " | "))
                      (:site-title (static.config/config)))]
+        [:meta {:name "description" :content (:description metadata)}]
+        [:meta {:name "keywords" :content (:tags metadata)}]
+        [:meta {:name "author" :content "Mike Aldred"}]
         [:link {:rel "stylesheet" :type "text/css" :href "/default.css"}]
         [:link {:rel "alternate" :type "application/rss+xml" :href "/rss-feed/"}]
         [:script {:type "text/javascript" :src "https://use.typekit.net/mry7vrs.js"}]

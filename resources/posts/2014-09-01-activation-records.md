@@ -1,5 +1,8 @@
 ---
 title: Trying to understand activation records.
+date: 2014-09-01
+description: When I try to work out what "activation records" are
+tags: Programming Uni
 ---
 
 It's interesting to see the development of programming languages over time, in particular to see how programming languages influenced the development of the underlying hardware. I'm currently studying programming languages at Uni, and the majority of the course is the study of past programming languages. We've started off with Pseudo-codes (very early assembly type language), and progressed from there. FORTRAN, ALGOL, Pascal, and some other languages are mentioned off-hand.

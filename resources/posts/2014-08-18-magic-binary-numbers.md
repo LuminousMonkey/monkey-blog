@@ -1,6 +1,8 @@
 ---
 title: Magic Binary Numbers
 date: 2014-08-18T19:35:00Z
+description: The lost art of some binary tricks in computing.
+tags: Programming LowLevel Binary
 ---
 
 How would you reverse a binary sequence? Say, given a 16-bit number?

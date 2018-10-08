@@ -1,5 +1,7 @@
 #+title: Ministry of Sound
 #+date: 2002-07-08
+#+description: Tony post party post about Ministry of Sound.
+#+tags: OldDays EDM Friends
 
 Going out and partying with friends, what more do I have to say?
 

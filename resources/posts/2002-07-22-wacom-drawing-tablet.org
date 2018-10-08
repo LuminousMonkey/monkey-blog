@@ -1,5 +1,7 @@
 #+title: Wacom Drawing Tablet
 #+date: 2002-07-22
+#+description: The first post I made when I bought a Wacom drawing tablet.
+#+tags: Drawing Wacom
 
 I have to say, drawing tablets rock!
 

@@ -1,4 +1,5 @@
-{:title "Just me, talking crap"}
+{:title "Just me, talking crap"
+ :description "The home page of LuminousMonkey, just a typical site, really."}
 
 [:ul {:class "posts"}
  (map
