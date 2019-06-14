@@ -1,0 +1,10 @@
+#+title: Updated Blogging System
+#+date: <2019-06-14 Fri>
+
+So, I've updated to a new static blog generator. This one is purely
+Emacs only, still using Org-mode, the idea being that if I make it
+easier, I should be able to blog more often.
+
+I've said this before, so, I'm really not confident I'll stick with
+it, this has been something I've been struggling with for years. Have
+to work out what I'm going to do about it.
