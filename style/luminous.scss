@@ -14,7 +14,7 @@ a {
 }
 
 body, p {
-  font-size: 1.105rem;
+  font-size: 1.255rem;
   line-height: 1.53;
   font-weight: normal;
   -webkit-text-size-adjust: 100%;}
@@ -26,7 +26,8 @@ body, p {
 }
 
 #content {
-    margin: 0 280px 0 20px;
+    max-width: 740px;
+    margin: 0 auto;
 
     h1, h2, h3, h4, h5, h6 {
         color: #ebe5ff;
@@ -48,7 +49,7 @@ body, p {
 
     .entry-title {
         color: #EBE5FF;
-        font-size: 21px;
+        font-size: 2.1rem;
         font-weight: bold;
         text-align: left;
         line-height: 1.3em;

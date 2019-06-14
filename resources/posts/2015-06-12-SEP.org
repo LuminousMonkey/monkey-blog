@@ -1,8 +1,0 @@
-#+title: SEP
-#+date: 2015-06-12T10:01:00Z
-
-Well shit, I've not updated for two months. I would like to blame this on the "Software Engineering Project" unit at Uni. But that would be a lie. I still have to try reading some code and analyse it's style, not sure how that's going to pan out. Anyway, just a quick post, something I should do more often.
-
-I'm currently reading: [[http://www.amazon.com/o/asin/0932633730][Exploring Requirements: Quality Before Design]], the main reason being that the project suffered a little from our inability to get a clear specification. There were a few factors for this, the client was out of the country for the first two weeks of the project. Lack of interest by our client and ourselves to get a spec sorted, that sort of thing.
-
-I like what I'm reading so far, it's making sense. If the project goes onward next semester, and if I'm a member of it, I'm hoping to make sure we don't have the same problems again.

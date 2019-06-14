@@ -1,0 +1,28 @@
+#+title: She Blinded Me With Science
+#+date: <2016-03-28 Mon>
+
+It seems to me, that one of the most important aspects of software
+development is one that doesn't get a great amount of focus.
+Debugging. Sure, it's mentioned here and there, but, for example,
+first year students aren't even taught about the command line Java
+debugger.
+
+So, I believe this video of Stuart Halloway, "[[https://youtu.be/FihU5JxmnBg][Debugging with the
+Scientific Method]]" is required viewing. Of course, it's not just
+debugging, but any sort of performance or work on a website or
+application. Take [[https://stackoverflow.com/][stackoverflow]] for example, it's a popular site and
+hosted on their own servers. I have been reading lately on their setup
+and the monitoring they do, not only for uptime, but for performance.
+
+For example, they use HAProxy to load balance to their web tier
+servers, obviously not unusual, that's what HAProxy is for. But, they
+also have these proxies capture and filter performance data from their
+application via headers in the HTTP response. It's probably something
+that everyone does, but to be honest, I've never come across any
+mention of this trick. (There's also their miniprofiler tool, which
+I'm using a variant of).
+
+Given how little debugging is taught in university (well, my
+university) I can't judge on how common and detailed this sort of
+performance measurement is. I suspect that it might not be very
+common, so could be an interesting area for me to focus on.

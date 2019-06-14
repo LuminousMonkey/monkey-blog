@@ -1,5 +1,5 @@
-#+title: What is a Monad like a writing desk?
-#+date: 2015-03-27T22:43:00Z
+#+title: Why is a Monad like a writing desk?
+#+date: <2015-03-27 Fri>
 
 I have seen this talk, however, given that someone I know was recently asked about monads in an interview, I thought it best to link to it here so I can find it later.
 

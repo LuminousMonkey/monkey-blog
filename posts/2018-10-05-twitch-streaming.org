@@ -1,5 +1,5 @@
 #+title: Twitch Streaming
-#+date: 2018-10-05
+#+date: <2018-10-05 Fri>
 #+description: I'm starting out on Twitch, and I'm going to blog about it.
 #+tags: Twitch Streaming Beginner
 

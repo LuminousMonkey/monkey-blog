@@ -1,5 +1,5 @@
 #+title: When you're bored at work, you decide to go browsing.
-#+date: 2002-07-18
+#+date: <2002-07-18 Thu>
 #+description: The type of post you make when bored.
 #+tags: Bored Music Quote
 

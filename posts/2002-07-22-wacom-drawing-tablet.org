@@ -1,5 +1,5 @@
 #+title: Wacom Drawing Tablet
-#+date: 2002-07-22
+#+date: <2002-07-22 Mon 11:10>
 #+description: The first post I made when I bought a Wacom drawing tablet.
 #+tags: Drawing Wacom
 
@@ -10,4 +10,4 @@ Not only for actual drawing, but for general use of the computer. If only it cou
 Anyhow, here’s my first pic using the tablet.
 
 #+attr_html: :width 100px
-[[img:2002-07-22/myfirsttabletpic.gif][My first tablet pic]]
+[[file:images/2002-07-22/myfirsttabletpic.gif]]

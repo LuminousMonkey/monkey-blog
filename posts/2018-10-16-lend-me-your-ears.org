@@ -1,0 +1,51 @@
+#+title: Lend Me Your Ears
+#+date: <2018-10-16 Tue>
+#+description: My adventures with streaming and audio.
+#+tags: Twitch Streaming Beginner Audio
+
+I've always had bad luck when it comes to Mics, through out my
+computing history. Basically, I've never managed to get nice, clear,
+audio of myself. Back when I had, I can't remember now, but some
+Soundblaster gaming card, I tried using a battery powered lapel mic,
+it just didn't seem to work properly.
+
+Either, I was just too quiet, or, if I turned up the gain so people
+could hear me, a horrible noisy mess, (and no... not the horrible mess
+that is my actual voice). I tried headsets with mics, which included a
+USB interface, no luck. I finally found success going to a USB mic,
+the AudioTechnica AT2020USB, and, is what I started my streaming with.
+
+That, of course, gave me other issues. I wasn't using a boom at the
+time, and I found that having it sit on the desk (it came with a
+little stand) would, of course, get noise with any tap or bump of the
+desk. Plus it wasn't located close to my mouth, so I people weren't
+quite getting the full awesomeness of my voice. So I decided a boom
+arm was what I needed to get next.
+
+This caused a problem, USB cables have a limited length, and using a
+boom with a USB mic would mean I would have an issue. This could have
+been worked around with a USB hub, but I figured, better to just get
+the option that removes the cable length issue. So, I went for a more
+traditional XLR mic.
+
+XLR (and the other connector type TRS) are capable of carrying
+"balanced audio", which I won't go into great detail here. But it's a
+trick that lets audio signals travel pretty long distances that allows
+any noise picked up along the way, to be filtered out. This means that
+my mic cable could have more than enough length without issues. (I
+believe anywhere from 15 to 30 meters)
+
+XLR also allows power to be send along the cable to power the device
+at the other end (48V phantom power). Typically, this phantom power is
+used with mics known as "condenser" mics. The summary is, I ended up
+going the proper condenser mic, XLR, and USB audio interface combo.
+
+I got the XLR version of the AT2020, an XLR cable (about 5 meters
+long), a Behringer Xenyx 302USB audio interface, and a Rhode PSA boom
+arm (with the AT8458 shock mount and pop sock filter). I had some
+problems with the Behringer, the audio quality wasn't fantastic. I
+eventually had to return it and got a Focusrite Scarlet Solo. It
+worked! I had good quality mic audio (at last!), but naturally, it
+didn't stop there...
+
+To be continued...

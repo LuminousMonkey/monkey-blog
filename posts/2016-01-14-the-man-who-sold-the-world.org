@@ -1,0 +1,45 @@
+#+title: The Man Who Sold The World
+#+date: <2016-02-03 Wed>
+
+I have a problem, I'm developing an application that uses a database
+(that's not the problem, databases are great, people should stop using
+them as stupid key/value stores), the problem I have is that I want to
+get continuous integration set up pretty early into the project. The
+earlier I get it organised, the better habits will flow from that (or
+that's the plan at least), and also the quicker it will be in the long
+run since it will help with the path to continuous deployment.
+
+The problem I have, is that my CI server (TeamCity) is running under a
+virtual machine. Ok, that's not the problem exactly, but the problem
+is I want to have the state of my database in a known good state.
+Also, we need to make sure that it's documented how to build the
+system. For local development, I'm using Vagrant, but, since the CI
+server is running in a virtual machine itself, then Vagrant isn't
+really suitable. (Yes, you could run a VM in a VM, but lets just not.)
+
+So, I either have to get a physical server running Linux (either
+migrate TeamCity to it, or have an agent run on it), or, figure out
+how to get a virtual machine that I can bring up and down via
+scripting. Luckily for me, it looks like someone already has:
+
+[[https://dor.ky/using-vmware-vsphereesxi-as-a-provider-for-vagrant/]]
+
+The basic idea is to create a template on your ESX server, then use a
+plugin for bringing a machine up and down based on that template. This
+seems like something that could work. The reason I need to bring up a
+whole database is because I'm not using some sort of ORM to abstract
+away the database. There are a few reasons for this:
+
+  1. I would lose the use of triggers, which are important for
+     maintaining data integrity, also they save the round-trips you
+     can get with ORM.
+  2. I can use the database authentication system, there's no point
+     rolling my own when the database can do it better and faster.
+  3. I don't need to switch databases, and designing the system for
+     that means you end up coding the for lowest common denominator.
+
+I have read some other blogs commenting both sides of the ORM debate,
+and I should write a post on it in the future about it, motivation
+willing. Anyway, I haven't got the build system up and running just
+yet, but I'm hoping that I've made some progress by Friday so should
+be able to do a quick post on how that's working out.

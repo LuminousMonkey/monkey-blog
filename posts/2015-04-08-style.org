@@ -1,0 +1,26 @@
+#+title: Style
+#+date: <2015-04-08 Wed>
+
+I don't think anyone would doubt, that authors have a style. For
+example, if you started reading a story by HP Lovecraft, and were
+familar with his works, you would probably pick up the little nuances
+that make it /feel/ like Lovecraft. Be it the flowery language, the
+themes of dreams or indescribable terrors that send you mad, a
+Lovecraft story has a /taste/.
+
+Is there a similar thing with code? Admittedly code is a bit more
+restrictive in some ways than natural language, given that the
+intended target has no intelligence at all. But, could you look at
+code, and determine who wrote it? Can you get the same flavour? I'm
+not so sure.
+
+But, this leads me to another thought, really not my thought, but one
+from my reading of: [[http://www.amazon.com/o/asin/0201362988][The Design of Design]]. In particular chapter 12,
+"Esthetics and Style in Technical Design". The last point the chapter
+makes is that studying the style of others will help, the same that an
+author reading a large number of other works will help with their own
+writing.
+
+So, to this end, I think I will try and find code, and analyse it's
+style. This is just going to be my own amateur musings and not worth
+much.

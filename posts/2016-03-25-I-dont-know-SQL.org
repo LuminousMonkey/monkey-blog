@@ -1,15 +1,36 @@
 #+title: I don't know SQL
-#+date: 2016-03-25
+#+date: <2016-03-25 Fri>
 
-I mentioned in the previous post that I'm not a database guru, luckily I haven't actually had to do a great deal of complex SQL queries. Which, is a shame in a way, because I was working on a particular SQL query this week just past, and it was interested. I learned a few things about PostgreSQL that I think make it *the* database to select when starting a project.
+I mentioned in the previous post that I'm not a database guru, luckily
+I haven't actually had to do a great deal of complex SQL queries.
+Which, is a shame in a way, because I was working on a particular SQL
+query this week just past, and it was interested. I learned a few
+things about PostgreSQL that I think make it *the* database to select
+when starting a project.
 
-Of course I know that SQL Server and Oracle would have these features, but I would be honestly surprised if MySQL did. I'm constantly surprised by how many projects use/support MySQL when it really is the inferior database to PostgreSQL. Again, I would argue that it's because ORM frameworks abstract away useful distinguishing features of the underlying database. But, I could obviously be wrong... unless you're dealing with GIS data, such as I am with my recent project.
+Of course I know that SQL Server and Oracle would have these features,
+but I would be honestly surprised if MySQL did. I'm constantly
+surprised by how many projects use/support MySQL when it really is the
+inferior database to PostgreSQL. Again, I would argue that it's
+because ORM frameworks abstract away useful distinguishing features of
+the underlying database. But, I could obviously be wrong... unless
+you're dealing with GIS data, such as I am with my recent project.
 
-It's an application that reads and stores GPS data from a Tait DMR network. The specifics aren't too important, but, basically, every thirty seconds we get a GPS location for a fleet of vehicles that we store in a database for querying. You could just get the decimal latitude and longitudes and store them in any database, but then when you try to do something with the data, it can get difficult.
+It's an application that reads and stores GPS data from a Tait DMR
+network. The specifics aren't too important, but, basically, every
+thirty seconds we get a GPS location for a fleet of vehicles that we
+store in a database for querying. You could just get the decimal
+latitude and longitudes and store them in any database, but then when
+you try to do something with the data, it can get difficult.
 
-For example, we have a customer, who wants to track the time that his employees are onsite. This is so he can charge his customer the correct amount. The thing is, when you get a GPS reading, it may be different. If they drive off for lunch, then head back, it would be a fine trick for them to get the *exact* GPS reading again.
+For example, we have a customer, who wants to track the time that his
+employees are onsite. This is so he can charge his customer the
+correct amount. The thing is, when you get a GPS reading, it may be
+different. If they drive off for lunch, then head back, it would be a
+fine trick for them to get the *exact* GPS reading again.
 
-Thankfully, the PostGIS extension for PostgreSQL gives datatypes and functions to help with this.
+Thankfully, the PostGIS extension for PostgreSQL gives datatypes and
+functions to help with this.
 
 First, the table definition for the GPS readings:
 
@@ -23,11 +44,24 @@ First, the table definition for the GPS readings:
   );
 #+end_src
 
-Nothing really too surprising here, just the geography type that PostGIS gives you. With GIS geography data, there's different ways you can do data projections, since you're trying to map a coordinate system of a spheroid (the Earth). GPSs return data in decimal latitude and longitude (WGS84, which is the same system used by Google maps), this means you're trying to use a Cartesian system to map onto a sphere. This results in distortion, if you've ever seen a 2D map of the Earth, you can see how massive Greenland is, even though it's a tiny country. That's a result of the distortion.
+Nothing really too surprising here, just the geography type that
+PostGIS gives you. With GIS geography data, there's different ways you
+can do data projections, since you're trying to map a coordinate
+system of a spheroid (the Earth). GPSs return data in decimal latitude
+and longitude (WGS84, which is the same system used by Google maps),
+this means you're trying to use a Cartesian system to map onto a
+sphere. This results in distortion, if you've ever seen a 2D map of
+the Earth, you can see how massive Greenland is, even though it's a
+tiny country. That's a result of the distortion.
 
-PostGIS uses the geography type to keep track of what system you're using, in this case I'm using SRID 4326. Which I believe is the expected GPS coordinate system.
+PostGIS uses the geography type to keep track of what system you're
+using, in this case I'm using SRID 4326. Which I believe is the
+expected GPS coordinate system.
 
-Anyway, basically, I have to get all the locations of the vehicle and group them into clusters, with the clusters being within a certain radius of each other. Actually, I'll just include the code here, since I already commented what it does...
+Anyway, basically, I have to get all the locations of the vehicle and
+group them into clusters, with the clusters being within a certain
+radius of each other. Actually, I'll just include the code here, since
+I already commented what it does...
 
 #+begin_src sql
   --- The following is a pretty messy SQL query.
@@ -105,10 +139,25 @@ Anyway, basically, I have to get all the locations of the vehicle and group them
      AND (end_time - start_time) > interval '5 minutes';
 #+end_src
 
-The question marks aren't part of the SQL, since I'm using Clojure JDBC, they're where the unit id for the vehicle gets substituted in. Again, I think that there is room for improvement here. Simply because I haven't used enough SQL to learn the best way to approach this. As it stands, I'm pretty happy with it.
+The question marks aren't part of the SQL, since I'm using Clojure
+JDBC, they're where the unit id for the vehicle gets substituted in.
+Again, I think that there is room for improvement here. Simply because
+I haven't used enough SQL to learn the best way to approach this. As
+it stands, I'm pretty happy with it.
 
-On the low-end VM (Linux, 2GB RAM) PostgreSQL is running on, it will get the result in about 1100ms, that's reading all the GPS position data for that unit in the system. It's been collecting the GPS data since the 11th of March 2016, which is about 20,000 rows.
+On the low-end VM (Linux, 2GB RAM) PostgreSQL is running on, it will
+get the result in about 1100ms, that's reading all the GPS position
+data for that unit in the system. It's been collecting the GPS data
+since the 11th of March 2016, which is about 20,000 rows.
 
-Considering the ClusterWithin function it's running, that's not too bad, it was a bit slower than that without that DISTINCT that I mentioned in my last post. Also, it should get faster, since I haven't added date ranges to restrict the number of rows searched.
+Considering the ClusterWithin function it's running, that's not too
+bad, it was a bit slower than that without that DISTINCT that I
+mentioned in my last post. Also, it should get faster, since I haven't
+added date ranges to restrict the number of rows searched.
 
-So, in summary, if you use MySQL, you should be using PostgreSQL and you should be taking advantage of the database features where possible, you can do some pretty cool stuff with those Window functions. I just wonder how many web applications using frameworks are missing out on easy performance gains because they've got sloppy SQL queries.
+So, in summary, if you use MySQL, you should be using PostgreSQL and
+you should be taking advantage of the database features where
+possible, you can do some pretty cool stuff with those Window
+functions. I just wonder how many web applications using frameworks
+are missing out on easy performance gains because they've got sloppy
+SQL queries.
