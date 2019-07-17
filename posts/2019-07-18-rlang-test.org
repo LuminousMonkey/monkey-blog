@@ -1,0 +1,37 @@
+#+title: Rlang Test
+#+date: <2019-07-18 Thu 06:29>
+#+filetags:
+
+* Example of Org-Babel for R Literate Programming
+** R text output
+A simple summary.
+#+begin_src R :results output :exports both
+  x <- rnorm(10)
+  summary(x)
+#+end_src
+
+#+RESULTS:
+:    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+: -1.0800 -0.1102  0.3295  0.3310  0.5145  2.3049
+
+Sample plot.
+
+#+begin_src R :results output graphics :exports both :file images/test-2.svg
+  library(lattice)
+  xyplot(1:10 ~ 1:10)
+#+end_src
+
+[[file:images/test-2.svg]]
+
+#+BEGIN_SRC R :results output graphics :exports both :file images/test-3.svg
+boxplot(islands)
+#+END_SRC
+
+[[file:images/test-3.svg]]
+
+#+begin_src R :results output graphics :exports both :file images/test.svg
+  library("ggplot2")
+  ggplot(iris, aes(x = Sepal.Width, y = Sepal.Length, color = Species)) + geom_point()
+#+end_src
+
+[[file:images/test.svg]]
