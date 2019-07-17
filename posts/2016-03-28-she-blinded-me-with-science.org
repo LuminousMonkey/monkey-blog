@@ -7,8 +7,7 @@ Debugging. Sure, it's mentioned here and there, but, for example,
 first year students aren't even taught about the command line Java
 debugger.
 
-So, I believe this video of Stuart Halloway, "[[https://youtu.be/FihU5JxmnBg][Debugging with the
-Scientific Method]]" is required viewing. Of course, it's not just
+So, I believe this video of Stuart Halloway, "[[https://youtu.be/FihU5JxmnBg][Debugging with the Scientific Method]]" is required viewing. Of course, it's not just
 debugging, but any sort of performance or work on a website or
 application. Take [[https://stackoverflow.com/][stackoverflow]] for example, it's a popular site and
 hosted on their own servers. I have been reading lately on their setup
