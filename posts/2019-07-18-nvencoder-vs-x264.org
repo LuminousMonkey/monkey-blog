@@ -51,9 +51,9 @@ So, with this all in mind, we just have to get a bunch of video files, and use b
 ** Results
 My Rake buildfile results in a CSV file that's about 45MB in size, it's this large because I also do things like collect the frame size in bytes, the type of frame and a bunch of different bitrates including a CRF[fn:4] option for x264 encoding. Taking this data, and putting it into [[https://www.r-project.org/][R]], lets us do some analysis so we can compare encoders.
 
-For example, we can graph NVEnc vs x264 medium at a 3000kbit rate:
+For example, we can graph NVEnc vs x264 medium at a 2500, q3500 and 4500kbit rate:
 
-#+begin_src R :session :exports none
+#+begin_src R :session :exports none :eval no-export
   library(plotly)
 
   quake_champions_data <- read.csv(file="~/Dropbox/Quake-Champions.csv", header=TRUE)
@@ -147,15 +147,33 @@ For example, we can graph NVEnc vs x264 medium at a 3000kbit rate:
   }
 #+end_src
 
-#+begin_src R :session :results output graphics :exports output :file images/2019/07/18/quake-champions-medium-3000.png
-  result <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 3000),], 'medium', 'false')
-  orca(result, "images/2019/07/18/quake-champions-medium-3000.png")
+#+begin_src R :session :exports none :eval no-export
+  quake_2500 <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 2500),], 'medium', 'false')
+  quake_3500 <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 3500),], 'medium', 'false')
+  quake_4500 <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 4500),], 'medium', 'false')
+  results <- subplot(quake_2500, quake_3500, quake_4500, shareY = TRUE)
+  orca(results, "images/2019/07/18/quake-champions-medium-3500.png")
+#+end_src
+
+#+begin_src R :session :exports none :eval no-export
+  quake_2500_fast <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 2500),], 'fast', 'false')
+  quake_3500_fast <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 3500),], 'fast', 'false')
+  quake_4500_fast <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 4500),], 'fast', 'false')
+  results <- subplot(quake_2500_fast, quake_3500_fast, quake_4500_fast, shareY = TRUE)
+  orca(results, "images/2019/07/18/quake-champions-fast-3500.png")
 #+end_src
 
 #+RESULTS:
+| 0 |   |   | FALSE |
 
 #+attr_html: :class center
-[[file:images/2019/07/18/quake-champions-medium-3000.png]]
+#+caption: Quake Champions: NVenc vs x264 medium.
+[[file:images/2019/07/18/quake-champions-medium-3500.png]]
+
+#+attr_html: :class center
+#+caption: Quake Champions: NVenc vs x264 fast.
+[[file:images/2019/07/18/quake-champions-fast-3500.png]]
+>>>>>>> 4e48b955df2e1ef54c67e6f25d5e606f2cd838a4
 
 [fn:1] First and foremost your stream should be about entertainment quality. Don't go spending any money on trying to get what may be a slight improvement over a cheaper option. Of course, this is a subject that has a bit more nuance, and it is something that is answered better by people are more qualified than me.
 
