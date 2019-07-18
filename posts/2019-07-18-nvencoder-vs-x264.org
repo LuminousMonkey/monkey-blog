@@ -51,12 +51,12 @@ So, with this all in mind, we just have to get a bunch of video files, and use b
 ** Results
 My Rake buildfile results in a CSV file that's about 45MB in size, it's this large because I also do things like collect the frame size in bytes, the type of frame and a bunch of different bitrates including a CRF[fn:4] option for x264 encoding. Taking this data, and putting it into [[https://www.r-project.org/][R]], lets us do some analysis so we can compare encoders.
 
-For example, we can graph NVEnc vs x264 medium at a 3000kbit rate:
+For example, we can graph NVEnc vs x264 medium at a 3500kbit rate:
 
-#+begin_src R :session
+#+begin_src R :session :exports none :eval no-export
   library(plotly)
 
-  quake_champions_data <- read.csv(file="~/DRopbox/Quake-Champions.csv", header=TRUE)
+  quake_champions_data <- read.csv(file="~/Dropbox/Quake-Champions.csv", header=TRUE)
 
   df <- quake_champions_data
 
@@ -147,11 +147,12 @@ For example, we can graph NVEnc vs x264 medium at a 3000kbit rate:
   }
 #+end_src
 
-#+begin_src R :session :results output graphics :exports output :file images/2019/07/18/quake-champions-medium-3000.png
-  plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 3000),], 'medium', 'false')
+#+begin_src R :session :exports none :eval no-export
+  results <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 3500),], 'medium', 'false')
+  orca(results, "images/2019/07/18/quake-champions-medium-3500.png")
 #+end_src
 
-[[file:images/2019/07/18/quake-champions-medium-3000.png]]
+[[file:images/2019/07/18/quake-champions-medium-3500.png]]
 
 [fn:1] First and foremost your stream should be about entertainment quality. Don't go spending any money on trying to get what may be a slight improvement over a cheaper option. Of course, this is a subject that has a bit more nuance, and it is something that is answered better by people are more qualified than me.
 
