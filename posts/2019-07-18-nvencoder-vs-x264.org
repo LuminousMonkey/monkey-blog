@@ -1,0 +1,162 @@
+#+title: NVEncoder vs x264
+#+date: <2019-07-18 12:54>
+#+filetags:
+
+CPU video encoding, or GPU video encoding, which one should you use?
+
+Anyone who is interested in streaming has probably, at some point wondered what is the best method for encoding their stream. The answer, like most things can be accurately answered in all cases with "it depends".
+
+There are a few factors that come into play that will affect what is the best approach, but the biggest factor at the end of the day will be if you have the processing power to use CPU based encoding or not. All GPU encoders can encode at 60 FPS or greater, however your processor may not, and if it can, then it may get bogged down with other tasks.
+
+GPU encoders have the advantage of having dedicated logic in the GPU that is just for encoding, and while you will take a performance hit, it is so slight as to be unnoticeable. So why use CPU encoders at all? Quality. Although they're great from a performance point of view, it is said that they suffer from poorer encoding quality, and typically if you're a content creator you want to make sure that your stream looks good.[fn:1]
+
+So, the point of this blog post, my gentle reader, is to try and give an objective answer to the question, "Is CPU based encoding better than GPU based encoding? And when should you use it?" Now, because I have Nvidia graphics cards, and x264 is pretty much the software option for CPU based encoding, that is the reason for the title.
+
+Typically, as I mentioned before, this is only a question if you have CPU power to spare, so generally I'm talking about a setup where you have a PC dedicated to streaming and it has the horsepower needed that CPU encoding is an option. You can still have a dedicated PC setup that uses GPU encoding, or you may play on a console or play retro games on original hardware.
+
+That said, [[https://www.twitch.tv/brogers_][Brogers]] uses x264 with a single PC setup, so it can vary because you can tweak the settings so it uses less CPU power, but are those settings worth it over using NVEnc? That's what this post is about!
+
+** Objective Quality?
+   In most of the NVEnc vs x264 comparisons I've seen, they don't use an objective measurement of encoding quality. They'll play a game, encode it using NVEnc or x264, stop, then switch to the other method and do a side-by-side comparison of the footage. This isn't ideal. Since the video data is different you're going to get slightly different results, and you can't objectively measure them.
+
+   However, there is at least one review I know of, that they do a correct method. Encode at lossless quality, then pipe that through your encoders so you have identical data... Well, almost. They used OBS and played the lossless video as a media source, then encoded off that. Again, you're getting slight variance... and still using fallible human organs while looking at the footage to compare.
+
+   Don't get me wrong, you still need to have eyes on the final result for a comparison, the audience is intended for humans after all. The best approach would be to have an objective measurement, then do a visual comparison at points of interest in order to make a better informed judgement.
+
+   There are objective measurements of quality. I won't go into what is available, because I'm just going to use one, VMAF, which is the [[https://medium.com/netflix-techblog/vmaf-the-journey-continues-44b51ee9ed12][measurement Netflix developed and uses]]. Basically, you feed in your original video and the video you encoded and it will rank the quality of each frame from 0 to 100. 0 being the lowest quality, 100 the highest. Doing some tests with humans ranking the quality, we have "bad", "poor", "fair", "good" and "excellent". This translated to something like 0 to 20, "bad", with a score of 70 being between "fair" and "good".
+
+   Armed with this, we can actually graph and compare encoders a bit more objectively. VMAF is what Netflix uses to gauge the quality of their encoding, since they encode so many videos you couldn't possibly have a human do it all, and they are all about having good quality for the lowest possible bandwidth.
+
+** Method
+Alright, so we need a method to get frame accurate comparisons of two different encoders. Easy, we:
+1. Record our footage in a lossless format.
+2. Encode in NVEnc.
+3. Encode in x264.
+4. Use VMAF to compare encodings against the original lossless format.
+
+The recording stage is easy, I play a game on my dual PC streaming setup, having my streaming PC encode to disk. I use MagicYUV as my lossless encoding format. For encoding, I use what all the streaming software uses in the background anyway, [[https://ffmpeg.org/][FFmpeg]]. FFmpeg is an opensource project that can convert to and from many different video and audio formats, it's the software that Netflix and [[https://youtube.com/][YouTube]] for their video encoding, and what OBS, et al use.
+
+#+attr_html: :class center
+#+caption: x264 Advanced Encoder Settings are the FFmpeg command line options.
+[[file:images/2019/07/18/obs-x264-encoder.png]]
+
+#+attr_html: :class center
+#+caption: FFmpeg DLL in OBS log file.
+[[file:images/2019/07/18/obs-ffmpeg.png]]
+
+So we can use FFmpeg as our encoder for x264 and NVEnc and then compare both against the original file using VMAF (which is convenient since VMAF can be compiled into FFmpeg).[fn:2]
+
+So, with this all in mind, we just have to get a bunch of video files, and use both encoders and different bitrates and see what the results are. I wrote up a script file using [[https://github.com/ruby/rake][Rake]][fn:3] and collected the results.
+
+** Results
+My Rake buildfile results in a CSV file that's about 45MB in size, it's this large because I also do things like collect the frame size in bytes, the type of frame and a bunch of different bitrates including a CRF[fn:4] option for x264 encoding. Taking this data, and putting it into [[https://www.r-project.org/][R]], lets us do some analysis so we can compare encoders.
+
+For example, we can graph NVEnc vs x264 medium at a 3000kbit rate:
+
+#+begin_src R :session
+  library(plotly)
+
+  quake_champions_data <- read.csv(file="~/DRopbox/Quake-Champions.csv", header=TRUE)
+
+  df <- quake_champions_data
+
+  plot_vmaf <- function(df, in_preset, in_crf) {
+    p <- df %>%
+      plot_ly(type = 'violin') %>%
+      add_trace(
+        x = ~bitrate[df$encoder == 'h264_nvenc'],
+        y = ~vmaf[df$encoder == 'h264_nvenc'],
+        scalegroup = 'NVEnc',
+        name = 'NVEnc',
+        side = 'negative',
+        box = list(
+          visible = T
+        ),
+        scalemode = 'count',
+        meanline = list(
+          visibile = T
+        )
+      ) %>%
+      add_trace(
+        x = ~bitrate[df$encoder == 'libx264' & preset == in_preset & crf == in_crf],
+        y = ~vmaf[df$encoder == 'libx264' & preset == in_preset & crf == in_crf],
+        scalegroup = 'x264',
+        name = paste('x264', in_preset, sep=' '),
+        side = 'positive',
+        box = list(
+          visible = T
+        ),
+        meanline = list(
+          visibile = T
+        )
+      ) %>%
+      layout(
+        xaxis = list(
+          title = ""
+        ),
+        yaxis = list(
+          title = "",
+          zeroline = F
+        )
+      )
+
+    return(p)
+  }
+
+  plot_crf_vmaf <- function(df, in_preset) {
+    p <- df %>%
+      plot_ly(type = 'violin') %>%
+      add_trace(
+        x = ~bitrate[df$encoder == 'libx264' & preset == in_preset & crf == 'false'],
+        y = ~vmaf[df$encoder == 'libx264' & preset == in_preset & crf == 'false'],
+        scalegroup = 'NVEnc',
+        name = 'No CRF',
+        side = 'negative',
+        box = list(
+          visible = T
+        ),
+        scalemode = 'count',
+        meanline = list(
+          visibile = T
+        )
+      ) %>%
+      add_trace(
+        x = ~bitrate[df$encoder == 'libx264' & preset == in_preset & crf == 'true'],
+        y = ~vmaf[df$encoder == 'libx264' & preset == in_preset & crf == 'true'],
+        scalegroup = 'x264',
+        name = 'CRF',
+        side = 'positive',
+        box = list(
+          visible = T
+        ),
+        meanline = list(
+          visibile = T
+        )
+      ) %>%
+      layout(
+        xaxis = list(
+          title = ""
+        ),
+        yaxis = list(
+          title = "",
+          zeroline = F
+        )
+      )
+
+    return(p)
+  }
+#+end_src
+
+#+begin_src R :session :results output graphics :exports output :file images/2019/07/18/quake-champions-medium-3000.png
+  plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 3000),], 'medium', 'false')
+#+end_src
+
+[[file:images/2019/07/18/quake-champions-medium-3000.png]]
+
+[fn:1] First and foremost your stream should be about entertainment quality. Don't go spending any money on trying to get what may be a slight improvement over a cheaper option. Of course, this is a subject that has a bit more nuance, and it is something that is answered better by people are more qualified than me.
+
+[fn:2] VMAF is opensource, and you can find it on Github at: [[https://github.com/Netflix/vmaf]].
+
+[fn:3] I had originally used Make, since I wanted to be able to have it generate any encodings I was missing automatically. It started to become a bit of a pain, so I switched to Rake. For no other reason that it was another Make-like build system and I had coded in Ruby years and years ago. At the time of writing, I haven't released this build file, because it still has some manual parts that I want to automate still.
+
+[fn:4] "Constant Rate Factor", more information can be found at [[https://superuser.com/questions/677576/what-is-crf-used-for-in-ffmpeg][this Superuser.com question]].

@@ -1,0 +1,7 @@
+#+title: Should have used CVS
+#+date: <2015-03-04 Wed>
+#+filetags:
+
+It seems that I lost all my old blog data, I thought I had saved the SQL database (I was using Wordpress previously). But I can't find it, whoops, that's a few years of blogging lost.
+
+Maybe I'll check the [[http://web.archive.org/][Internet Wayback Machine]], and recover anything that seems interesting from there.
