@@ -16,6 +16,8 @@ Typically, as I mentioned before, this is only a question if you have CPU power 
 
 That said, [[https://www.twitch.tv/brogers_][Brogers]] uses x264 with a single PC setup, so it can vary because you can tweak the settings so it uses less CPU power, but are those settings worth it over using NVEnc? That's what this post is about!
 
+(If you're just interested in the results, [[results][you can jump straight to them]].)
+
 ** Objective Quality?
    In most of the NVEnc vs x264 comparisons I've seen, they don't use an objective measurement of encoding quality. They'll play a game, encode it using NVEnc or x264, stop, then switch to the other method and do a side-by-side comparison of the footage. This isn't ideal. Since the video data is different you're going to get slightly different results, and you can't objectively measure them.
 
@@ -27,7 +29,7 @@ That said, [[https://www.twitch.tv/brogers_][Brogers]] uses x264 with a single P
 
    Armed with this, we can actually graph and compare encoders a bit more objectively. VMAF is what Netflix uses to gauge the quality of their encoding, since they encode so many videos you couldn't possibly have a human do it all, and they are all about having good quality for the lowest possible bandwidth.
 
-** Method
+** MetXhod
 Alright, so we need a method to get frame accurate comparisons of two different encoders. Easy, we:
 1. Record our footage in a lossless format.
 2. Encode in NVEnc.
@@ -36,11 +38,11 @@ Alright, so we need a method to get frame accurate comparisons of two different 
 
 The recording stage is easy, I play a game on my dual PC streaming setup, having my streaming PC encode to disk. I use MagicYUV as my lossless encoding format. For encoding, I use what all the streaming software uses in the background anyway, [[https://ffmpeg.org/][FFmpeg]]. FFmpeg is an opensource project that can convert to and from many different video and audio formats, it's the software that Netflix and [[https://youtube.com/][YouTube]] for their video encoding, and what OBS, et al use.
 
-#+attr_html: :class center
+#+attr_html: :class center :width 522 :height 224
 #+caption: x264 Advanced Encoder Settings are the FFmpeg command line options.
 [[file:images/2019/07/18/obs-x264-encoder.png]]
 
-#+attr_html: :class center
+#+attr_html: :class center :width 603 :height 736
 #+caption: FFmpeg DLL in OBS log file.
 [[file:images/2019/07/18/obs-ffmpeg.png]]
 
@@ -48,8 +50,9 @@ So we can use FFmpeg as our encoder for x264 and NVEnc and then compare both aga
 
 So, with this all in mind, we just have to get a bunch of video files, and use both encoders and different bitrates and see what the results are. I wrote up a script file using [[https://github.com/ruby/rake][Rake]][fn:3] and collected the results.
 
+<<results>>
 ** Results
-My Rake buildfile results in a CSV file that's about 45MB in size, it's this large because I also do things like collect the frame size in bytes, the type of frame and a bunch of different bitrates including a CRF[fn:4] option for x264 encoding. Taking this data, and putting it into [[https://www.r-project.org/][R]], lets us do some analysis so we can compare encoders.
+My Rake buildfile results in a CSV file that's about 45MB in size for each original video footage I use, it's this large because I also do things like collect the frame size in bytes, the type of frame and a bunch of different bitrates including a CRF[fn:4] option for x264 encoding. Taking this data, and putting it into [[https://www.r-project.org/][R]], lets us do some analysis so we can compare encoders.
 
 For example, we can graph NVEnc vs x264 medium at a 3500kbit rate:
 
@@ -152,7 +155,11 @@ For example, we can graph NVEnc vs x264 medium at a 3500kbit rate:
   orca(results, "images/2019/07/18/quake-champions-medium-3500.png")
 #+end_src
 
+#+attr_html: :class center :width 700 :height 500
+#+caption: Quake Champions: NVEnc vs x264 (medium)
 [[file:images/2019/07/18/quake-champions-medium-3500.png]]
+
+A graph gives a much better idea of the situation. x264 using the medium profile, gives a better quality encode than NVenc on my 1080Ti.
 
 [fn:1] First and foremost your stream should be about entertainment quality. Don't go spending any money on trying to get what may be a slight improvement over a cheaper option. Of course, this is a subject that has a bit more nuance, and it is something that is answered better by people are more qualified than me.
 
