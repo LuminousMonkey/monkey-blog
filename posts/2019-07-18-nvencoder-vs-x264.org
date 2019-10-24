@@ -29,7 +29,7 @@ That said, [[https://www.twitch.tv/brogers_][Brogers]] uses x264 with a single P
 
    Armed with this, we can actually graph and compare encoders a bit more objectively. VMAF is what Netflix uses to gauge the quality of their encoding, since they encode so many videos you couldn't possibly have a human do it all, and they are all about having good quality for the lowest possible bandwidth.
 
-** MetXhod
+** Method
 Alright, so we need a method to get frame accurate comparisons of two different encoders. Easy, we:
 1. Record our footage in a lossless format.
 2. Encode in NVEnc.
