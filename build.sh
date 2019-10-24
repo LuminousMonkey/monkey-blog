@@ -26,14 +26,13 @@
 
 ;; Start Org Mode
 (require 'org-mode-basic)
-(require 'org-mode-organisation)
-(require 'org-mode-templates)
 
 (require 'programming-clojure)
 
 (use-package ess
   :init (require 'ess-site)
   :config
+  (setq ess-ask-for-ess-directory nil)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . nil)

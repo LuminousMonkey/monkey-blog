@@ -23,7 +23,7 @@ That said, [[https://www.twitch.tv/brogers_][Brogers]] uses x264 with a single P
 
    For example, we can graph NVEnc vs x264 medium at a 2500, 3500 and 4500kbit rate:
 
-#+begin_src R :session :exports none :eval no-export
+#+begin_src R :session :exports none
   library(plotly)
 
   quake_champions_data <- read.csv(file="data/2019/07/18/Quake-Champions.csv", header=TRUE)
@@ -117,7 +117,7 @@ That said, [[https://www.twitch.tv/brogers_][Brogers]] uses x264 with a single P
   }
 #+end_src
 
-#+begin_src R :session :exports none :eval no-export
+#+begin_src R :session :exports none
   quake_2500 <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 2500),], 'medium', 'false')
   quake_3500 <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 3500),], 'medium', 'false')
   quake_4500 <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 4500),], 'medium', 'false')
@@ -127,7 +127,7 @@ That said, [[https://www.twitch.tv/brogers_][Brogers]] uses x264 with a single P
 
 A graph gives a much better idea of the situation. x264 using the medium profile, gives a better quality encode than NVenc on my 1080Ti.
 
-#+begin_src R :session :exports none :eval no-export
+#+begin_src R :session :exports none
   quake_2500_fast <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 2500),], 'fast', 'false')
   quake_3500_fast <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 3500),], 'fast', 'false')
   quake_4500_fast <- plot_vmaf(quake_champions_data[which(quake_champions_data$bitrate == 4500),], 'fast', 'false')
