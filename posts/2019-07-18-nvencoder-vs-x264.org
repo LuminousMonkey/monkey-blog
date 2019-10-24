@@ -16,45 +16,12 @@ Typically, as I mentioned before, this is only a question if you have CPU power 
 
 That said, [[https://www.twitch.tv/brogers_][Brogers]] uses x264 with a single PC setup, so it can vary because you can tweak the settings so it uses less CPU power, but are those settings worth it over using NVEnc? That's what this post is about!
 
-(If you're just interested in the results, [[results][you can jump straight to them]].)
-
-** Objective Quality?
-   In most of the NVEnc vs x264 comparisons I've seen, they don't use an objective measurement of encoding quality. They'll play a game, encode it using NVEnc or x264, stop, then switch to the other method and do a side-by-side comparison of the footage. This isn't ideal. Since the video data is different you're going to get slightly different results, and you can't objectively measure them.
-
-   However, there is at least one review I know of, that they do a correct method. Encode at lossless quality, then pipe that through your encoders so you have identical data... Well, almost. They used OBS and played the lossless video as a media source, then encoded off that. Again, you're getting slight variance... and still using fallible human organs while looking at the footage to compare.
-
-   Don't get me wrong, you still need to have eyes on the final result for a comparison, the audience is intended for humans after all. The best approach would be to have an objective measurement, then do a visual comparison at points of interest in order to make a better informed judgement.
-
-   There are objective measurements of quality. I won't go into what is available, because I'm just going to use one, VMAF, which is the [[https://medium.com/netflix-techblog/vmaf-the-journey-continues-44b51ee9ed12][measurement Netflix developed and uses]]. Basically, you feed in your original video and the video you encoded and it will rank the quality of each frame from 0 to 100. 0 being the lowest quality, 100 the highest. Doing some tests with humans ranking the quality, we have "bad", "poor", "fair", "good" and "excellent". This translated to something like 0 to 20, "bad", with a score of 70 being between "fair" and "good".
-
-   Armed with this, we can actually graph and compare encoders a bit more objectively. VMAF is what Netflix uses to gauge the quality of their encoding, since they encode so many videos you couldn't possibly have a human do it all, and they are all about having good quality for the lowest possible bandwidth.
-
-** Method
-Alright, so we need a method to get frame accurate comparisons of two different encoders. Easy, we:
-1. Record our footage in a lossless format.
-2. Encode in NVEnc.
-3. Encode in x264.
-4. Use VMAF to compare encodings against the original lossless format.
-
-The recording stage is easy, I play a game on my dual PC streaming setup, having my streaming PC encode to disk. I use MagicYUV as my lossless encoding format. For encoding, I use what all the streaming software uses in the background anyway, [[https://ffmpeg.org/][FFmpeg]]. FFmpeg is an opensource project that can convert to and from many different video and audio formats, it's the software that Netflix and [[https://youtube.com/][YouTube]] for their video encoding, and what OBS, et al use.
-
-#+attr_html: :class center :width 522 :height 224
-#+caption: x264 Advanced Encoder Settings are the FFmpeg command line options.
-[[file:images/2019/07/18/obs-x264-encoder.png]]
-
-#+attr_html: :class center :width 603 :height 736
-#+caption: FFmpeg DLL in OBS log file.
-[[file:images/2019/07/18/obs-ffmpeg.png]]
-
-So we can use FFmpeg as our encoder for x264 and NVEnc and then compare both against the original file using VMAF (which is convenient since VMAF can be compiled into FFmpeg).[fn:2]
-
-So, with this all in mind, we just have to get a bunch of video files, and use both encoders and different bitrates and see what the results are. I wrote up a script file using [[https://github.com/ruby/rake][Rake]][fn:3] and collected the results.
-
-<<results>>
 ** Results
-My Rake buildfile results in a CSV file that's about 45MB in size for each original video footage I use, it's this large because I also do things like collect the frame size in bytes, the type of frame and a bunch of different bitrates including a CRF[fn:4] option for x264 encoding. Taking this data, and putting it into [[https://www.r-project.org/][R]], lets us do some analysis so we can compare encoders.
+   Basically, in most cases, x264 medium provides better quality. However that doesn't mean it's the best thing to use.
 
-For example, we can graph NVEnc vs x264 medium at a 2500, q3500 and 4500kbit rate:
+   My Rake buildfile results in a CSV file that's about 45MB in size, it's this large because I also do things like collect the frame size in bytes, the type of frame and a bunch of different bitrates including a CRF2 option for x264 encoding. Taking this data, and putting it into R, lets us do some analysis so we can compare encoders.
+
+   For example, we can graph NVEnc vs x264 medium at a 2500, 3500 and 4500kbit rate:
 
 #+begin_src R :session :exports none :eval no-export
   library(plotly)
@@ -168,16 +135,49 @@ A graph gives a much better idea of the situation. x264 using the medium profile
   orca(results, "images/2019/07/18/quake-champions-fast-3500.png")
 #+end_src
 
-#+RESULTS:
-| 0 |   |   | FALSE |
-
-#+attr_html: :class center
+#+attr_html: :class center :width 592 :height 427 :loading lazy
 #+caption: Quake Champions: NVenc vs x264 medium.
 [[file:images/2019/07/18/quake-champions-medium-3500.png]]
 
-#+attr_html: :class center
+#+attr_html: :class center :width 592 :height 427 :loading lazy
 #+caption: Quake Champions: NVenc vs x264 fast.
 [[file:images/2019/07/18/quake-champions-fast-3500.png]]
+
+However, we're doing statistics, and using our eyes is not the thing to do, so, instead, in R, we will test to see if x264 is indeed better than NVEnc for quality encoding:
+
+** Objective Quality?
+   In most of the NVEnc vs x264 comparisons I've seen, they don't use an objective measurement of encoding quality. They'll play a game, encode it using NVEnc or x264, stop, then switch to the other method and do a side-by-side comparison of the footage. This isn't ideal. Since the video data is different you're going to get slightly different results, and you can't objectively measure them.
+
+   However, there is at least one review I know of, that they do a correct method. Encode at lossless quality, then pipe that through your encoders so you have identical data... Well, almost. They used OBS and played the lossless video as a media source, then encoded off that. Again, you're getting slight variance... and still using fallible human organs while looking at the footage to compare.
+
+   Don't get me wrong, you still need to have eyes on the final result for a comparison, the audience is intended for humans after all. The best approach would be to have an objective measurement, then do a visual comparison at points of interest in order to make a better informed judgement.
+
+   There are objective measurements of quality. I won't go into what is available, because I'm just going to use one, VMAF, which is the [[https://medium.com/netflix-techblog/vmaf-the-journey-continues-44b51ee9ed12][measurement Netflix developed and uses]]. Basically, you feed in your original video and the video you encoded and it will rank the quality of each frame from 0 to 100. 0 being the lowest quality, 100 the highest. Doing some tests with humans ranking the quality, we have "bad", "poor", "fair", "good" and "excellent". This translated to something like 0 to 20, "bad", with a score of 70 being between "fair" and "good".
+
+   Armed with this, we can actually graph and compare encoders a bit more objectively. VMAF is what Netflix uses to gauge the quality of their encoding, since they encode so many videos you couldn't possibly have a human do it all, and they are all about having good quality for the lowest possible bandwidth.
+
+** Method
+   Alright, so we need a method to get frame accurate comparisons of two different encoders. Easy, we:
+   1. Record our footage in a lossless format.
+   2. Encode in NVEnc.
+   3. Encode in x264.
+   4. Use VMAF to compare encodings against the original lossless format.
+
+   The recording stage is easy, I play a game on my dual PC streaming setup, having my streaming PC encode to disk. I use MagicYUV as my lossless encoding format. For encoding, I use what all the streaming software uses in the background anyway, [[https://ffmpeg.org/][FFmpeg]]. FFmpeg is an opensource project that can convert to and from many different video and audio formats, it's the software that Netflix and [[https://youtube.com/][YouTube]] for their video encoding, and what OBS, et al use.
+
+#+attr_html: :class center :width 522 :height 224 :loading lazy
+#+caption: x264 Advanced Encoder Settings are the FFmpeg command line options.
+[[file:images/2019/07/18/obs-x264-encoder.png]]
+
+#+attr_html: :class center :width 603 :height 736 :loading lazy
+#+caption: FFmpeg DLL in OBS log file.
+[[file:images/2019/07/18/obs-ffmpeg.png]]
+
+So we can use FFmpeg as our encoder for x264 and NVEnc and then compare both against the original file using VMAF (which is convenient since VMAF can be compiled into FFmpeg).[fn:2]
+
+So, with this all in mind, we just have to get a bunch of video files, and use both encoders and different bitrates and see what the results are. I wrote up a script file using [[https://github.com/ruby/rake][Rake]][fn:3] and collected the results.
+
+<<results>>
 
 [fn:1] First and foremost your stream should be about entertainment quality. Don't go spending any money on trying to get what may be a slight improvement over a cheaper option. Of course, this is a subject that has a bit more nuance, and it is something that is answered better by people are more qualified than me.
 

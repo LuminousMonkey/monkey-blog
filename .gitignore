@@ -3,5 +3,6 @@
 *.css
 static.jar
 html/
+blog/
 \#*\#
 .DS_Store
