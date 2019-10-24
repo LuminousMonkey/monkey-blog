@@ -16,22 +16,22 @@ A simple summary.
 
 Sample plot.
 
-#+begin_src R :results output graphics :exports both :file images/test-2.svg
+#+begin_src R :results output graphics :exports both :file images/2019/07/18/test-2.svg
   library(lattice)
   xyplot(1:10 ~ 1:10)
 #+end_src
 
-[[file:images/test-2.svg]]
+[[file:images/2019/07/18/test-2.svg]]
 
-#+BEGIN_SRC R :results output graphics :exports both :file images/test-3.svg
+#+BEGIN_SRC R :results output graphics :exports both :file images/2019/07/18/test-3.svg
 boxplot(islands)
 #+END_SRC
 
-[[file:images/test-3.svg]]
+[[file:images/2019/07/18/test-3.svg]]
 
-#+begin_src R :results output graphics :exports both :file images/test.svg
+#+begin_src R :results output graphics :exports both :file images/2019/07/18/test.svg
   library("ggplot2")
   ggplot(iris, aes(x = Sepal.Width, y = Sepal.Length, color = Species)) + geom_point()
 #+end_src
 
-[[file:images/test.svg]]
+[[file:images/2019/07/18/test.svg]]
