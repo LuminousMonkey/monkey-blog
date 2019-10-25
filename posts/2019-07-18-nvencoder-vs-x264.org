@@ -231,6 +231,10 @@ to see if the trend holds, or maybe it's the motion blur effects, or
 something else with how Doom renders the final image that makes it
 nicer for NVEnc.
 
+#+attr_html: :class center :width 592 :height 333 :loading lazy
+#+caption: NVEnc performs better on the first Doom arena.
+[[file:images/2019/07/18/doom-e1-nvenc-4500-frame.png]]
+
 #+RESULTS:
 #+begin_example
 
