@@ -283,6 +283,49 @@ Testing to see if they are really different.
   t.test(fortnite_x264_1000$vmaf, fortnite_nvenc_1000$vmaf, paired = TRUE)
 #+end_src
 
+*** Forza Demo - Spring
+#+begin_src R :session :exports none
+  forza_data <- read.csv(file="data/2019/07/18/Forza-Spring.csv", header=TRUE)
+
+  forza_2500 <- plot_vmaf(forza_data[which(forza_data$bitrate == 2500),], 'medium', 'false')
+  forza_3500 <- plot_vmaf(forza_data[which(forza_data$bitrate == 3500),], 'medium', 'false')
+  forza_4500 <- plot_vmaf(forza_data[which(forza_data$bitrate == 4500),], 'medium', 'false')
+  results <- subplot(forza_2500, forza_3500, forza_4500, shareY = TRUE)
+  orca(results, "images/2019/07/18/forza-medium-3500.png")
+#+end_src
+
+#+RESULTS:
+: org_babel_R_eoe
+
+#+begin_src R :session :exports none
+  forza_2500_fast <- plot_vmaf(forza_data[which(forza_data$bitrate == 2500),], 'fast', 'false')
+  forza_3500_fast <- plot_vmaf(forza_data[which(forza_data$bitrate == 3500),], 'fast', 'false')
+  forza_4500_fast <- plot_vmaf(forza_data[which(forza_data$bitrate == 4500),], 'fast', 'false')
+  results <- subplot(forza_2500_fast, forza_3500_fast, forza_4500_fast, shareY = TRUE)
+  orca(results, "images/2019/07/18/forza-fast-3500.png")
+#+end_src
+
+#+RESULTS:
+
+#+attr_html: :class center :width 592 :height 427 :loading lazy
+#+caption: Forza: NVenc vs x264 medium.
+[[file:images/2019/07/18/forza-medium-3500.png]]
+
+#+attr_html: :class center :width 592 :height 427 :loading lazy
+#+caption: Forza: NVenc vs x264 fast.
+[[file:images/2019/07/18/forza-fast-3500.png]]
+
+Testing to see if they are really different.
+
+#+begin_src R :session :exports none
+  forza_x264_1000 <- vmaf_filter(forza_data, 'libx264', 1000, 'medium', 'false')
+  forza_nvenc_1000 <- vmaf_filter(forza_data, 'h264_nvenc', 1000, 'llhq', 'false')
+#+end_src
+
+#+begin_src R :results output :session :exports both
+  t.test(forza_x264_1000$vmaf, forza_nvenc_1000$vmaf, paired = TRUE)
+#+end_src
+
 ** Objective Quality?
    In most of the NVEnc vs x264 comparisons I've seen, they don't use an objective measurement of encoding quality. They'll play a game, encode it using NVEnc or x264, stop, then switch to the other method and do a side-by-side comparison of the footage. This isn't ideal. Since the video data is different you're going to get slightly different results, and you can't objectively measure them.
 
