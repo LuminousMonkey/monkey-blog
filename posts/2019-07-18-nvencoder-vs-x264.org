@@ -214,8 +214,6 @@ better visual quality than NVEnc.
 #+caption: Doom E1: NVenc vs x264 fast.
 [[file:images/2019/07/18/doom-e1-fast-3500.png]]
 
-Testing to see if
-
 #+begin_src R :session :exports none
   doom_x264_1000 <- vmaf_filter(doom_data, 'libx264', 1000, 'medium', 'false')
   doom_nvenc_1000 <- vmaf_filter(doom_data, 'h264_nvenc', 1000, 'llhq', 'false')
@@ -224,6 +222,14 @@ Testing to see if
 #+begin_src R :results output :session :exports both
   t.test(doom_x264_1000$vmaf, doom_nvenc_1000$vmaf, paired = TRUE)
 #+end_src
+
+This is a rare test where NVEnc comes out ahead of x264. I'm guessing
+(without any evidence to back it up, so take it with a grain of salt),
+that the foggy, red, style of that level is what gives the NVEnc
+encoder the edge. I will have to record footage of some other levels
+to see if the trend holds, or maybe it's the motion blur effects, or
+something else with how Doom renders the final image that makes it
+nicer for NVEnc.
 
 #+RESULTS:
 #+begin_example
@@ -272,8 +278,6 @@ mean of the differences
 #+caption: Fortnite: NVenc vs x264 fast.
 [[file:images/2019/07/18/fortnite-fast-3500.png]]
 
-Testing to see if they are really different.
-
 #+begin_src R :session :exports none
   fortnite_x264_1000 <- vmaf_filter(fortnite_data, 'libx264', 1000, 'medium', 'false')
   fortnite_nvenc_1000 <- vmaf_filter(fortnite_data, 'h264_nvenc', 1000, 'llhq', 'false')
@@ -282,6 +286,10 @@ Testing to see if they are really different.
 #+begin_src R :results output :session :exports both
   t.test(fortnite_x264_1000$vmaf, fortnite_nvenc_1000$vmaf, paired = TRUE)
 #+end_src
+
+x264 comes out ahead using Fortnite, the graphic style of Fortnite
+must make the job of both video encoders easier overall, compared to
+Doom and Quake Champions.
 
 *** Forza Demo - Spring
 #+begin_src R :session :exports none
@@ -315,8 +323,6 @@ Testing to see if they are really different.
 #+caption: Forza: NVenc vs x264 fast.
 [[file:images/2019/07/18/forza-fast-3500.png]]
 
-Testing to see if they are really different.
-
 #+begin_src R :session :exports none
   forza_x264_1000 <- vmaf_filter(forza_data, 'libx264', 1000, 'medium', 'false')
   forza_nvenc_1000 <- vmaf_filter(forza_data, 'h264_nvenc', 1000, 'llhq', 'false')
@@ -325,6 +331,10 @@ Testing to see if they are really different.
 #+begin_src R :results output :session :exports both
   t.test(forza_x264_1000$vmaf, forza_nvenc_1000$vmaf, paired = TRUE)
 #+end_src
+
+Forza, and I would hazard a guess, any game that has screen motion
+like racing sims, really pushes encoders, since the bitrate just isn't
+high enough to cope. However, again x264 comes out ahead of NVEnc.
 
 ** Objective Quality?
    In most of the NVEnc vs x264 comparisons I've seen, they don't use an objective measurement of encoding quality. They'll play a game, encode it using NVEnc or x264, stop, then switch to the other method and do a side-by-side comparison of the footage. This isn't ideal. Since the video data is different you're going to get slightly different results, and you can't objectively measure them.
