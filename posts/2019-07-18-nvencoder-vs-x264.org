@@ -26,7 +26,7 @@ That said, [[https://www.twitch.tv/brogers_][Brogers]] uses x264 with a single P
 #+begin_src R :session :exports none
   library(plotly)
 
-  quake_champions_data <- read.csv(file="../data/2019/07/18/Quake-Champions.csv", header=TRUE)
+  quake_champions_data <- read.csv(file="data/2019/07/18/Quake-Champions.csv", header=TRUE)
 
   df <- quake_champions_data
 
