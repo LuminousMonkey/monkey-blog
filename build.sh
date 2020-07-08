@@ -1,8 +1,5 @@
 #!/usr/bin/emacs --script
 
-(load-file (concat (file-name-directory user-emacs-directory)
-           "core/core-load-paths.el"))
-
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -25,9 +22,36 @@
 (setq-default tab-width 4)
 
 ;; Start Org Mode
-(require 'org-mode-basic)
+(use-package org
+  :init
+  ;; Show the formatted text of *bold*, /italics/, but not the
+  ;; characters used to mark then out.
+  (setq org-hide-emphasis-markers t)
 
-(require 'programming-clojure)
+  ;; Show any source blocks in their native mode.
+  (setq org-src-fontify-natively t)
+
+  ;; Use CSS for any HTML output.
+  (setq org-export-htmlize-output-type 'css))
+
+(use-package clojure-mode
+  :mode (("\\.edn$" . clojure-mode))
+  :init
+  (progn
+    (use-package clojure-mode-extra-font-locking)
+
+    (setq clojure--prettify-symbols-alist
+          '(("fn" . ?λ)
+            ("not=" . ?≠)
+            ("identical?" . ?≡)
+            ("<=" . ?≤)
+            (">=" . ?≥)
+            ("->" . (?- (Br . Bc) ?- (Br . Bc) ?>))
+            ("->>" .  (?\s (Br . Bl) ?\s (Br . Bl) ?\s
+                           (Bl . Bl) ?- (Bc . Br) ?- (Bc . Bc) ?>
+                           (Bc . Bl) ?- (Br . Br) ?>))))
+
+    (add-hook 'clojure-mode-hook 'prettify-symbols-mode)))
 
 (use-package ess
   :init (require 'ess-site)
