@@ -1,4 +1,4 @@
-#!/usr/bin/emacs --script
+#!/usr/local/bin/emacs --script
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -76,7 +76,11 @@
   (setq org-static-blog-enable-tags t)
   (setq org-export-with-toc nil)
   (setq org-export-with-section-numbers nil)
-  (setq org-static-blog-use-semantic-html t))
+  (setq org-static-blog-use-semantic-html t)
+  (setq org-static-blog-page-header
+        "<meta name=\"author\" content=\"Mike Aldred\">
+<meta name=\"referrer\" content=\"no-referrer\">
+<link href=\"style/default.css\" rel=\"stylesheet\" type=\"text/css\" />"))
 
 (use-package htmlize
   :commands
